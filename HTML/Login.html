@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../CSS/Login.css">
+</head>
+<body>
+    <main>
+        <form action="">
+            <h1>Sign In</h1>
+            <label for="">
+                <span onclick="focusCursor(this)">USERNAME</span>
+                <input type="text" id="username" autocomplete="off" required onfocus="moveSpan(this);" onfocusout="resetSpan(this);">
+            </label>
+            <label for="">
+                <span onclick="focusCursor(this)">PASSWORD</span>
+                <input type="password" required id="password" onfocus="moveSpan(this);" onfocusout="resetSpan(this);">
+            </label>
+            <div class="signin">
+                <input type="submit" id="submit" value="Sign In">
+                <img src="../Images/next.png" alt="">
+            </div>
+            <a href="#" class="form_password">Forgot Password?</a>
+            <div class="form_socialmedia">
+                <button class="twitter">
+                    <img src="../Images/twitter.png" alt="">
+                    TWITTER
+                </button>
+                <button class="facebook">
+                    <img src="../Images/facebook.png" alt="">
+                    FACEBOOK
+                </button>
+            </div>
+            <div class="signup">
+                <p>Don't have an account? <a href="#">Sign Up for free</a></p>
+            </div>
+        </form>
+    </main>
+    <script src="../JS/Funciones.js"></script>
+</body>
+</html>

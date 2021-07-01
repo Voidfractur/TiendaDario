@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="../CSS/SignUp.css">
+</head>
+<body>
+    <main>
+        <div class="register">
+            <h1>Sign Up</h1>
+            <hr>
+            <form action="">
+                <section class="first_section">
+                    <h2>Personal Information</h2>
+                </section>
+                <div class="inputs firstSection">
+                    <label for=""  class="name_label">
+                        <span onclick="focusCursor(this)" class="name">Name</span>
+                        <input type="text" id="name" name="name" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for=""  class="paternal_label">
+                        <span onclick="focusCursor(this)" class="paternal">Paternal Surname</span>
+                        <input type="text" id="paternal" name="paternal" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for=""  class="maternal_label">
+                        <span onclick="focusCursor(this)" class="maternal">Maternal Surname</span>
+                        <input type="text" id="maternal" name="maternal" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for="" class="phoneNumber_label">
+                        <span onclick="focusCursor(this)" class="phoneNumber">Phone Number</span>
+                        <input type="number" id="phoneNumber" name="phoneNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                    </label>
+                    <label for="" class="street_label">
+                        <span onclick="focusCursor(this)" class="street">Street</span>
+                        <input type="text" id="street" name="street" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for="" class="interiorNumber_label">
+                        <span onclick="focusCursor(this)" class="interiorNumber">Interior Number</span>
+                        <input type="number" id="interiorNumber" name="interioirNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                    </label>
+                    <label for="" class="outNumber_label">
+                        <span onclick="focusCursor(this)" class="outNumber">Out Number</span>
+                        <input type="number" id="outNumber" name="outNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                    </label>
+                    <label for="" class="postalCode_label">
+                        <span onclick="focusCursor(this)" class="postalCode">Postal Code</span>
+                        <input type="number" id="postalCode" name="postalCode" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="1">
+                    </label>
+                    <label for="" class="suburb_label">
+                        <span onclick="focusCursor(this)" class="suburb">Suburb</span>
+                        <input type="number" id="suburb" name="suburb" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <div>
+                        <input type="radio" id="contactChoice1"
+                         name="contact" value="email">
+                        <label for="contactChoice1">Woman</label>
+                    
+                        <input type="radio" id="contactChoice2"
+                         name="contact" value="phone">
+                        <label for="contactChoice2">Man</label>
+                    </div>
+                </div>
+                <hr class="hr">
+                <section class="second_section">
+                    <h2>User Data</h2>
+                </section>
+                <div class="inputs secodnSection">
+                    <label for="" class="username_label">
+                        <span onclick="focusCursor(this)" class="username">USERNAME</span>
+                        <input type="text" id="username" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for="" class="password_label">
+                        <span onclick="focusCursor(this)" class="password">PASSWORD</span>
+                        <input type="password" required id="password" onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                    <label for="" class="repeatPass_label">
+                        <span onclick="focusCursor(this)" class="repeatPass">Repeat Password</span>
+                        <input type="password" required id="repeatPass" onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    </label>
+                </div>
+                <hr class="hr">
+                <input type="submit" id="submit" value="Sign In">
+                <button class="cancel">Cancel</button>
+                <button class="back">Back</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        function movingSpan(input) {
+            document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid #4285f4`;
+            let span = document.getElementsByClassName(`${input.id}`)[0];
+            span.style.top = `-0.8rem`;
+            span.style.backgroundColor = `#fff`;
+            span.style.color = `#4285f4`;
+        }
+        function resetingSpan(input) {
+            if(input.value == ``) {
+                document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid silver`;
+                let span = document.getElementsByClassName(`${input.id}`)[0];
+                span.style.top = `1rem`;
+                span.style.left = `1rem`;
+                span.style.backgroundColor = ``;
+                span.style.color = `silver`;
+            }
+        }
+
+        function focusCursor(span) {
+            document.getElementById(`${span.className}`).focus();
+        }
+    </script>
+</body>
+</html>
