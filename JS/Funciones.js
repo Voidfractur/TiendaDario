@@ -43,3 +43,16 @@ function focusCursor(span) {
         document.getElementById(`password`).focus();
     }
 }
+
+function inicioSesion() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`signin`, `User`);
+    // datos.append(`username`, document.get)
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+    }, false);
+
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
+}
