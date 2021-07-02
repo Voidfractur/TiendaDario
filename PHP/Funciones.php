@@ -131,7 +131,7 @@ if(isset($_POST['verUsuarios'])) {
             if($_POST['usuarioLogueado'] == $ren['empleado']) {
                 $acciones = <<<HDOC
                     <button type="button" onclick='mostrarDetalles($ren[empleado])' class="btn btn-secondary">Detalles</button>
-                    <button type="button" onclick='editarEmpleado($ren[empleado])' class="btn btn-primary">Editar</button>
+                    <button type="button" onclick='vistaModificar($ren[empleado])' class="btn btn-primary">Editar</button>
                 HDOC;
             }
             else {
@@ -195,13 +195,13 @@ if(isset($_POST['detalleUsuario'])) {
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Apellidos</div>
+                        <div class="fw-bold">Correo</div>
                             $ren[correo]
                     </div>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Apellidos</div>
+                        <div class="fw-bold">Teléfono</div>
                             $ren[telefono]
                     </div>
                 </li>
@@ -218,6 +218,71 @@ if(isset($_POST['detalleUsuario'])) {
     }
 }
 
+//MODIFICAR EL USUARIO: VISTA.
 if(isset($_POST['vistaModificar'])) {
-    
+    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['vistaModificar']);
+    if($consult->num_rows>0) {
+        $datosUsuario = <<<HDOC
+            <form action='javascript:modificar($_POST[vistaModificar]);'>
+            <ol class="list-group list-group-numbered">
+        HDOC;
+        while($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
+            $datosUsuario .= <<<HDOC
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Foto</div>
+                        <input type='file' name='archivo' id='archivo'>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Nombre</div>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]'>
+                                <label for="nombre">Nombre</label>
+                            </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Paterno</div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]'>
+                            <label for="paterno">Apellido Paterno</label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Paterno</div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]'>
+                            <label for="materno">Apellido Materno</label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Sexo</div>
+                        <select class="form-select" aria-label="Default select example">
+                            <option selected>Open this select menu</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                        </select>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Apellidos</div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]'>
+                            <label for="correo">Correo Electrónico</label>
+                        </div>
+                    </div>
+                </li>
+            HDOC;
+        }
+        $datosUsuario .= "</ol> <button type='button' onclick='verUsuarios();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button> <input type='submit' name='update' id='update' value='Actualizar' class='btn btn-success'> </form>";
+        echo $datosUsuario;
+    }
 }

@@ -85,7 +85,18 @@ function mostrarDetalles(id) {
     sol.send(datos);
 }
 
-function editarEmpleado(id) {
+function vistaModificar(id) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`vistaModificar`, `${id}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
+}
+
+function modificar(id) {
 
 }
 
