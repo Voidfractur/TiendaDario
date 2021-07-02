@@ -82,8 +82,27 @@ function inicioSesion() {
 function nuevoUsuario() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
-    datos.append(`signin`, `User`);
-    // datos.append(`username`, document.get)
+    let sex = null;
+    let form = document.querySelector("#form");
+    if(document.getElementById(`woman`).checked) {
+        sex = document.getElementById(`woman`).value;
+    }
+    else if(document.getElementById(`man`).checked) {
+        sex = document.getElementById(`man`).value;
+    }
+    datos.append(`nuevoUsuario`, `newUser`);
+    datos.append(`nombre`,form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sex}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    if(form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    datos.append(`username`, form.username.value);
+    datos.append(`password`, form.password.value);
+    datos.append(`repeat`, form.repeatPass.value);
     sol.addEventListener('load', function(e) {
         console.log(e.target.responseText);
     }, false);

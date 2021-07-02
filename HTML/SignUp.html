@@ -12,7 +12,7 @@
         <div class="register">
             <h1>Sign Up</h1>
             <hr>
-            <form action="">
+            <form action="javascript:nuevoUsuario();" enctype="multipart/form-data" id="form">
                 <section class="first_section">
                     <h2>Personal Information</h2>
                 </section>
@@ -41,13 +41,13 @@
                         <input type='file' id="file" name="file">
                     </div>
                     <div>
-                        <input type="radio" id="contactChoice1"
-                         name="contact" value="email">
-                        <label for="contactChoice1">Woman</label>
+                        <input type="radio" id="woman"
+                         name="contact" value="Femenino">
+                        <label for="woman">Femenino</label>
                     
-                        <input type="radio" id="contactChoice2"
-                         name="contact" value="phone">
-                        <label for="contactChoice2">Man</label>
+                        <input type="radio" id="man"
+                         name="contact" value="Masculino">
+                        <label for="man">Masculino</label>
                     </div>
                 </div>
                 <hr class="hr">
@@ -69,7 +69,7 @@
                     </label>
                 </div>
                 <hr class="hr">
-                <input type="submit" id="button" value="Sign In" id="newUser">
+                <input type="submit" value="Sign In" id="submit">
                 <button class="cancel">Cancel</button>
                 <button class="back">Back</button>
             </form>

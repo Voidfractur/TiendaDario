@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="../CSS/Login.css">
+    <!-- <link rel="stylesheet" href="../CSS/Login.css"> -->
 </head>
 <body>
     <main>
-        <form action="">
+        <form action="javascript:inicioSesion();">
             <h1>Sign In</h1>
             <label for="">
                 <span onclick="focusCursor(this)">USERNAME</span>
@@ -20,7 +20,7 @@
                 <input type="password" name="password" required id="password" onfocus="moveSpan(this);" onfocusout="resetSpan(this);">
             </label>
             <div class="signin">
-                <input type="button" name="signin" onclick="inicioSesion();" id="submit" value="Sign In">
+                <input type="submit" name="signin" id="submit" value="Sign In">
                 <img src="../Images/next.png" alt="">
             </div>
             <a href="#" class="form_password">Forgot Password?</a>
