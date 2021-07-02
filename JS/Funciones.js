@@ -71,6 +71,9 @@ function inicioSesion() {
     var sol = new XMLHttpRequest;
     datos.append(`signin`, `User`);
     // datos.append(`username`, document.get)
+    let form = document.querySelector("#form");
+    datos.append(`username`, form.username.value);
+    datos.append(`password`, form.password.value);
     sol.addEventListener('load', function(e) {
         console.log(e.target.responseText);
     }, false);
