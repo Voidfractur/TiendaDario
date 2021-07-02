@@ -13,7 +13,7 @@ html {
 
 main {
     width: 100%;
-    height: 110rem;
+    height: 90rem;
     background-color: #dde0e7;
     padding-top: 0.1rem;
 }
@@ -52,7 +52,7 @@ form {
 }
 
 .first_section {
-    height: 65rem;
+    height: 45rem;
 }
 
 .second_section, .secodnSection {

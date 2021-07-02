@@ -35,6 +35,28 @@ function resetSpan(input) {
     }
 }
 
+function movingSpan(input) {
+    document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid #4285f4`;
+    let span = document.getElementsByClassName(`${input.id}`)[0];
+    span.style.top = `-0.8rem`;
+    span.style.backgroundColor = `#fff`;
+    span.style.color = `#4285f4`;
+}
+function resetingSpan(input) {
+    if(input.value == ``) {
+        document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid silver`;
+        let span = document.getElementsByClassName(`${input.id}`)[0];
+        span.style.top = `1rem`;
+        span.style.left = `1rem`;
+        span.style.backgroundColor = ``;
+        span.style.color = `silver`;
+    }
+}
+
+function focusCursor1(span) {
+    document.getElementById(`${span.className}`).focus();
+}
+
 function focusCursor(span) {
     if(span.textContent == "USERNAME") {
         document.getElementById(`username`).focus();
@@ -45,6 +67,19 @@ function focusCursor(span) {
 }
 
 function inicioSesion() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`signin`, `User`);
+    // datos.append(`username`, document.get)
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+    }, false);
+
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
+}
+
+function nuevoUsuario() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
     datos.append(`signin`, `User`);

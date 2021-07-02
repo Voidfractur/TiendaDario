@@ -17,42 +17,29 @@
                     <h2>Personal Information</h2>
                 </section>
                 <div class="inputs firstSection">
-                    <label for=""  class="name_label">
-                        <span onclick="focusCursor(this)" class="name">Name</span>
-                        <input type="text" id="name" name="name" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <label for=""  class="nombre_label">
+                        <span onclick="focusCursor1(this)" class="nombre">Nombre</span>
+                        <input type="text" id="nombre" name="nombre" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
-                    <label for=""  class="paternal_label">
-                        <span onclick="focusCursor(this)" class="paternal">Paternal Surname</span>
-                        <input type="text" id="paternal" name="paternal" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <label for=""  class="paterno_label">
+                        <span onclick="focusCursor1(this)" class="paterno">Apellido Paterno</span>
+                        <input type="text" id="paterno" name="paterno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
-                    <label for=""  class="maternal_label">
-                        <span onclick="focusCursor(this)" class="maternal">Maternal Surname</span>
-                        <input type="text" id="maternal" name="maternal" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <label for=""  class="materno_label">
+                        <span onclick="focusCursor1(this)" class="materno">materno</span>
+                        <input type="text" id="materno" name="materno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
-                    <label for="" class="phoneNumber_label">
-                        <span onclick="focusCursor(this)" class="phoneNumber">Phone Number</span>
-                        <input type="number" id="phoneNumber" name="phoneNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                    <label for="" class="telefono_label">
+                        <span onclick="focusCursor1(this)" class="telefono">Teléfono</span>
+                        <input type="number" id="telefono" name="telefono" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
                     </label>
-                    <label for="" class="street_label">
-                        <span onclick="focusCursor(this)" class="street">Street</span>
-                        <input type="text" id="street" name="street" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <label for="" class="correo_label">
+                        <span onclick="focusCursor1(this)" class="correo">Correo</span>
+                        <input type="text" id="correo" name="correo" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
-                    <label for="" class="interiorNumber_label">
-                        <span onclick="focusCursor(this)" class="interiorNumber">Interior Number</span>
-                        <input type="number" id="interiorNumber" name="interioirNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
-                    </label>
-                    <label for="" class="outNumber_label">
-                        <span onclick="focusCursor(this)" class="outNumber">Out Number</span>
-                        <input type="number" id="outNumber" name="outNumber" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
-                    </label>
-                    <label for="" class="postalCode_label">
-                        <span onclick="focusCursor(this)" class="postalCode">Postal Code</span>
-                        <input type="number" id="postalCode" name="postalCode" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="1">
-                    </label>
-                    <label for="" class="suburb_label">
-                        <span onclick="focusCursor(this)" class="suburb">Suburb</span>
-                        <input type="number" id="suburb" name="suburb" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
-                    </label>
+                    <div class='file-input' style="margin-bottom: 40px;">
+                        <input type='file' id="file" name="file">
+                    </div>
                     <div>
                         <input type="radio" id="contactChoice1"
                          name="contact" value="email">
@@ -69,47 +56,25 @@
                 </section>
                 <div class="inputs secodnSection">
                     <label for="" class="username_label">
-                        <span onclick="focusCursor(this)" class="username">USERNAME</span>
+                        <span onclick="focusCursor1(this)" class="username">Nombre de usuario</span>
                         <input type="text" id="username" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
                     <label for="" class="password_label">
-                        <span onclick="focusCursor(this)" class="password">PASSWORD</span>
+                        <span onclick="focusCursor1(this)" class="password">Contraseña</span>
                         <input type="password" required id="password" onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
                     <label for="" class="repeatPass_label">
-                        <span onclick="focusCursor(this)" class="repeatPass">Repeat Password</span>
+                        <span onclick="focusCursor1(this)" class="repeatPass">Repite la contraseña</span>
                         <input type="password" required id="repeatPass" onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
                     </label>
                 </div>
                 <hr class="hr">
-                <input type="submit" id="submit" value="Sign In">
+                <input type="submit" id="button" value="Sign In" id="newUser">
                 <button class="cancel">Cancel</button>
                 <button class="back">Back</button>
             </form>
         </div>
     </main>
-    <script>
-        function movingSpan(input) {
-            document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid #4285f4`;
-            let span = document.getElementsByClassName(`${input.id}`)[0];
-            span.style.top = `-0.8rem`;
-            span.style.backgroundColor = `#fff`;
-            span.style.color = `#4285f4`;
-        }
-        function resetingSpan(input) {
-            if(input.value == ``) {
-                document.getElementsByClassName(`${input.id}_label`)[0].style.border = `0.1rem solid silver`;
-                let span = document.getElementsByClassName(`${input.id}`)[0];
-                span.style.top = `1rem`;
-                span.style.left = `1rem`;
-                span.style.backgroundColor = ``;
-                span.style.color = `silver`;
-            }
-        }
-
-        function focusCursor(span) {
-            document.getElementById(`${span.className}`).focus();
-        }
-    </script>
+    <script src="../JS/Funciones.js"></script>
 </body>
 </html>
