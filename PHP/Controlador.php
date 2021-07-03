@@ -111,3 +111,43 @@ if(isset($_POST['interfazUsuario'])) {
 if(isset($_POST['eliminarEmpleado'])) {
     $cnn->query("UPDATE empleado SET status_emp = 'Despedido' WHERE id_emp = ". $_POST['eliminarEmpleado']);
 }
+
+if(isset($_POST['venderProductos'])) {
+    echo interfazVenderProducto();
+}
+
+if(isset($_POST['agregar'])) {
+    $consultaProducto = $cnn->query("SELECT * FROM producto WHERE codigo_pro = '". $_POST['codigoBarras']. "'");
+    if($consultaProducto->num_rows>0) { echo true; }
+    else { echo false; }
+}
+
+if(isset($_POST['agregarProducto'])) {
+    $consultaProducto = $cnn->query("SELECT * FROM producto WHERE codigo_pro = '". $_POST['codigoBarras']. "'");
+    echo agregarProducto($consultaProducto);
+}
+
+if(isset($_POST['comprarContado'])) {
+    echo vistaComprarContado();
+}
+
+if(isset($_POST['pagarContado'])) {
+    $idCliente = $cnn->query("SELECT id_cli as id FROM cliente WHERE tipo_cli = 'Público general' LIMIT 1");
+    if($idCliente->num_rows > 0) {
+        $idCliente = $idCliente->fetch_array(MYSQLI_ASSOC)['id'];
+        date_default_timezone_set("America/Mexico_City");
+        $ticket = $cnn->query("INSERT INTO ticket VALUES(null, '". date("Y-m-d"). "', ". $_POST['total'] .", ". $_POST['empleado']. ", ". $idCliente. ")");
+        echo $ticket;
+    }
+}
+
+if(isset($_POST['renglonticket'])) {
+    $idTicket = $cnn->query("SELECT max(id_tic) as id FROM ticket");
+    $idProducto = $cnn->query("SELECT id_pro as id FROM producto WHERE codigo_pro = '". $_POST['codigobarras']. "'");
+    if($idTicket->num_rows > 0 && $idProducto->num_rows > 0) {
+        $idTicket = $idTicket->fetch_array(MYSQLI_ASSOC)['id'];
+        $idProducto = $idProducto->fetch_array(MYSQLI_ASSOC)['id'];
+        $renglonticket = $cnn->query("INSERT INTO renglonticket VALUES(null, ". $_POST['cantidad']. ", ". $_POST['precio']. ", $idProducto, $idTicket)");
+        echo $renglonticket;
+    }
+}

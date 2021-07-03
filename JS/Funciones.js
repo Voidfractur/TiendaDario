@@ -1,4 +1,10 @@
 var menu = "";
+var tablaProductos = "";
+var productos = [];
+var contenidoProductos = "";
+var tuplas = {
+    'datos' :[]
+  };
 function login() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -166,13 +172,180 @@ function eliminarEmpleado(id) {
 }
 
 function vender() {
+    productos = [];
     var datos = new FormData();
     var sol = new XMLHttpRequest;
-    datos.append(`eliminarEmpleado`, `${id}`);
+    datos.append(`venderProductos`, `vender`);
+    contenidoProductos = "";
+    tablaProductos = "";
+    tuplas = {
+        'datos' :[]
+      };
     sol.addEventListener('load', function(e) {
+        tablaProductos = e.target.responseText;
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
 
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function buscarProducto() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let form = document.querySelector("#form");
+    datos.append(`agregar`, `agregar`);
+    datos.append(`codigoBarras`, `${form.producto.value}`);
+    sol.addEventListener('load', function(e) {
+        if(e.target.responseText) {
+            agregarProducto(form.producto.value);
+        }
+        else {
+            document.getElementsByClassName(`main`)[0].innerHTML = menu + "<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> Producto no encontrado.<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>" + tablaProductos;
+        }
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function agregarProducto(codigoBarras) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    if(productos.length != 0) {
+        for(let i = 0; i < productos.length; i++) {
+            if(productos[i] == codigoBarras) {
+                agregarOtroProducto(codigoBarras);
+                return;
+            }
+        }
+    }
+    productos.push(codigoBarras);
+    let form = document.querySelector("#form");
+    datos.append(`agregarProducto`, `agregar`);
+    datos.append(`codigoBarras`, `${codigoBarras}`);
+    datos.append(`productosAgregados`, `${productos}`);
+    sol.addEventListener('load', function(e) {
+        // e.target.responseText
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + tablaProductos + contenidoProductos + e.target.responseText;
+        contenidoProductos += e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function agregarOtroProducto(producto) {
+    let aumentar = document.getElementsByClassName(`${producto}`);
+    aumentar[1].textContent = parseInt(aumentar[1].textContent) + 1;
+    aumentar[3].textContent = parseInt(aumentar[1].textContent) * parseInt(aumentar[2].textContent);
+    contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
+}
+
+function eliminarUnaPieza(producto) {
+    let eliminar = document.getElementsByClassName(`${producto}`);
+    if(eliminar[1].textContent == 1) {
+        document.getElementsByTagName(`tbody`)[0].removeChild(document.getElementById(`${producto}`));
+        contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
+        removeItemFromArr(productos, `${producto}`);
+        return;
+    }
+    eliminar[1].textContent = parseInt(eliminar[1].textContent) - 1;
+    eliminar[3].textContent = parseInt(eliminar[3].textContent) - (eliminar[2].textContent);
+    contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
+}
+
+function removeItemFromArr(arr, item) {
+    var i = arr.indexOf(item);
+    arr.splice(i, 1);
+}
+
+function comprarContado() {
+    if(document.getElementsByTagName(`tr`).length == 1) {
+        alert("No hay productos");
+    }
+    else {
+        let tr = document.getElementsByTagName(`tr`);
+        for (let i = 1; i < tr.length; i++) {
+            let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
+            tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
+       };       
+    //    json= JSON.stringify(obj);
+        var datos = new FormData();
+        var sol = new XMLHttpRequest;
+        datos.append(`comprarContado`, `contado`);
+        sol.addEventListener('load', function(e) {
+            document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+            agregarProductos();
+        }, false);
+    
+        sol.open('POST', '../PHP/Controlador.php',true);
+        sol.send(datos);
+    }
+}
+
+function agregarProductos() {
+    let lista = document.getElementById(`productosAComprar`);
+    // console.log(tuplas.datos.length);
+    // console.log(tuplas.datos[0]); //correct
+    let totalAPagar = 0;
+    for(let i = 0; i < tuplas.datos.length; i++) {
+        console.log("Entra al for");
+        let articulos = `
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">${tuplas.datos[i].nombre}</div>
+                        <p>Costo por unidad: <strong>$${tuplas.datos[i].costounidad}</strong></p>
+                        <p>Cantidad comprada: <strong>${tuplas.datos[i].cantidadcomprada}</strong></p>
+                    <p>Total: <strong>$${tuplas.datos[i].total}</strong></p>
+                </div>
+            </li>
+        `;
+        totalAPagar += parseFloat(tuplas.datos[i].total);
+        lista.innerHTML += articulos;
+    }
+
+    lista.innerHTML += `
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold" style='font-size: 20px;' id='totalParaPagar'>$${totalAPagar}</div>
+            </div>
+        </li>
+    `;
+}
+
+function pagarSinRegistro() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`pagarContado`, `contado`);
+    let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
+    datos.append(`total`, total);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    sol.addEventListener('load', function(e) {
+        // document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+        for(let i = 0; i < tuplas.datos.length; i++) {
+            renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
+        }
+        console.log(e.target.responseText);
+
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function renglonTicket(cantidad, precio, codigoBarras) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`cantidad`, cantidad);
+    datos.append(`precio`, precio);
+    datos.append(`codigobarras`, codigoBarras);
+    datos.append(`renglonticket`, `renglonticket`);
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+
+    }, false);
+    
     sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }

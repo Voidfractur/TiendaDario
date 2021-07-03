@@ -30,8 +30,8 @@ function menu($datosUsuario) {
                                 Ventas
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" onclick='vender();'>Vender un producto</a></li>
-                                <li><a class="dropdown-item" onclick='verCredito();'>Ventas hechas a crédito</a></li>
+                                <li><a class="dropdown-item" onclick='vender();' style='cursor: pointer;'>Vender un producto</a></li>
+                                <li><a class="dropdown-item" onclick='verCredito();' style='cursor: pointer;'>Ventas hechas a crédito</a></li>
                                 <!-- <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Something else here</a></li> -->
                             </ul>
@@ -254,4 +254,125 @@ function vistaModificar($consult) {
 
 function interfazUsuario() {
     return header('Location: ../HTML/SignUp.html');
+}
+
+function interfazVenderProducto() {
+    $vender = <<<HDOC
+        <form class="row g-3" style='margin-top: 10px;' id='form' action='javascript:buscarProducto();'>
+            <div class="col-auto">
+                <label for="producto" class="visually-hidden">Código de barras</label>
+                <input type="number" class="form-control" required id="producto" placeholder="Código de barras">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Agregar producto</button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" onclick='comprarCredito();'>Comprar a crédito</button>
+                <button type="button" class="btn btn-success" onclick='comprarContado();'>Comprar al contado</button>
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Código de barras</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Cantidad a comprar</th>
+                    <th scope="col">Precio por unidad</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+    HDOC;
+    return $vender;
+}
+
+function agregarProducto($producto) {
+    $producto = $producto->fetch_array(MYSQLI_ASSOC);
+    $acciones = <<<HDOC
+        <button type="button" onclick='eliminarUnaPieza($producto[codigo_pro]);' class="btn btn-danger">Eliminar una unidad</button>
+        <button type="button" onclick='agregarOtroProducto($producto[codigo_pro]);' class="btn btn-primary">Agregar una unidad más</button>
+        
+    HDOC;
+    $nuevoProducto = <<<HDOC
+        <tr id='$producto[codigo_pro]'>
+            <th scope="row">$producto[id_pro]</th>
+            <td>$producto[codigo_pro]</td>
+            <td class='$producto[codigo_pro]'>$producto[nombre_pro]</td>
+            <td class='$producto[codigo_pro]'>1</td>
+            <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
+            <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
+            <td>$acciones</td>
+        </tr>
+    HDOC;
+    return $nuevoProducto;
+}
+
+function vistaComprarContado() {
+    $compra = <<<HDOC
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Artículos a comprar
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <ol class="list-group list-group-numbered" id='productosAComprar'></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form action="javascript:pagarSinRegistro();" enctype="multipart/form-data" id="form" style='margin-top: 10px;'>
+            <button class="btn btn-link" onclick="vender();">Cancelar</button>
+            <input type="submit" class="btn btn-primary" value="Pagar sin registrarse" id="submit">
+        </form>
+        <div class="register" style='margin-top: 30px;'>
+            <h1>Nuevo Cliente</h1>
+            <hr>
+            <form action="javascript:pagarNuevoCliente();" enctype="multipart/form-data" id="form">
+                <div class="inputs firstSection">
+                    <label for=""  class="nombre_label">
+                        <span onclick="focusCursor1(this)" class="nombre">Nombre</span>
+                    <input type="text" id="nombre" name="nombre" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                </label>
+                <label for=""  class="paterno_label">
+                    <span onclick="focusCursor1(this)" class="paterno">Apellido Paterno</span>
+                    <input type="text" id="paterno" name="paterno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                </label>
+                <label for=""  class="materno_label">
+                    <span onclick="focusCursor1(this)" class="materno">Apellido Materno</span>
+                    <input type="text" id="materno" name="materno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                </label>
+                <label for="" class="telefono_label">
+                    <span onclick="focusCursor1(this)" class="telefono">Teléfono</span>
+                    <input type="number" id="telefono" name="telefono" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                </label>
+                <label for="" class="correo_label">
+                    <span onclick="focusCursor1(this)" class="correo">Correo</span>
+                    <input type="text" id="correo" name="correo" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                </label>
+                <div class='file-input' style="margin-bottom: 40px;">
+                    <input type='file' id="file" name="file">
+                </div>
+                <div>
+                    <input type="radio" id="woman"
+                    name="contact" value="Femenino">
+                    <label for="woman">Femenino</label>
+                
+                    <input type="radio" id="man"
+                    name="contact" value="Masculino">
+                    <label for="man">Masculino</label>
+                </div>
+            </div>
+            <hr class="hr">
+            <input type="submit" value="Registrar y pagar" id="submit">
+            <button class="cancel" onclick="verUsuarios();">Cancel</button>
+            <button class="back"onclick="verUsuarios();">Back</button>
+        </form>
+    </div>
+    HDOC;
+    return $compra;
 }
