@@ -103,7 +103,7 @@ if(isset($_POST['nuevoUsuario'])) {
 }
 
 if(isset($_POST['verUsuarios'])) {
-    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto, status_emp as statusemp FROM empleado e join persona p on e.cve_per = p.id_per");
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto, status_emp as statusemp FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.status_emp = 'Contratado'");
     if($consult->num_rows>0) {
         $tabla = <<<HDOC
             <form class="d-flex" action='javascript:nuevoEmpleado();' style='margin-top: 20px; margin-bottom = 20px;'>
@@ -126,7 +126,7 @@ if(isset($_POST['verUsuarios'])) {
         HDOC;
         while ($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
             $img = "";
-            if($ren['statusemp'] == "Despedido") { continue; }
+            // if($ren['statusemp'] == "Despedido") { echo $ren['nombre']; continue; }
             if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
             else { $img = "../Images/noPhoto.png"; }
             $acciones = "";
@@ -138,9 +138,9 @@ if(isset($_POST['verUsuarios'])) {
             }
             else {
                 $acciones = <<<HDOC
-                    <button type="button" onclick='mostrarDetalles($ren[empleado])' class="btn btn-secondary">Detalles</button>
-                    <button type="button" onclick='vistaModificar($ren[empleado])' class="btn btn-primary">Editar</button>
-                    <button type="button" onclick='eliminarEmpleado($ren[empleado])' class="btn btn-danger">Eliminar</button>
+                    <button type="button" onclick='mostrarDetalles($ren[empleado]);' class="btn btn-secondary">Detalles</button>
+                    <button type="button" onclick='vistaModificar($ren[empleado]);' class="btn btn-primary">Editar</button>
+                    <button type="button" onclick='eliminarEmpleado($ren[empleado]);' class="btn btn-danger">Eliminar</button>
                 HDOC;
             }
             $tabla .= <<<HDOC
@@ -342,7 +342,6 @@ if(isset($_POST['modificar'])) {
         fclose($fp);
         $contenido = addslashes($contenido);
         $cadArchi = "foto_per='$contenido', tipoarchivo_per='$tipo',";
-        // $per->setFotoPerfil($contenido);
     }
     $persona = $cnn->query("UPDATE persona SET $cadArchi ap_per = '". $per->getPaterno(). "', am_per = '".$per->getMaterno(). "', nombre_per = '".$per->getNombre(). "', sexo_per = '".$per->getSexo(). "', telefono_per = ".$per->getTelefono(). ", correo_per = '".$per->getCorreo(). "' WHERE id_per = ". $_POST['modificar']);
     $cnn->query("UPDATE empleado SET puesto_emp = '". $_POST['puesto']. "' WHERE cve_per = ". $_POST['modificar']);

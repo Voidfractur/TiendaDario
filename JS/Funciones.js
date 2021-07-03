@@ -102,10 +102,10 @@ function modificar(id) {
     }
     sol.addEventListener('load', function(e) {
         // document.getElementsByClassName(`main`)[0].innerHTML = menu;
+        verUsuariosMensaje(`Empleado ${form.nombre.value} actualizado`);
     }, false);
     sol.open('POST', '../PHP/Funciones.php',true);
     sol.send(datos);
-    verUsuariosMensaje(`Empleado ${form.nombre.value} actualizado`);
 }
 
 function nuevoEmpleado() {
@@ -158,10 +158,9 @@ function eliminarEmpleado(id) {
     var sol = new XMLHttpRequest;
     datos.append(`eliminarEmpleado`, `${id}`);
     sol.addEventListener('load', function(e) {
-        console.log(e.target.responseText);
+        verUsuariosMensaje(`El empleado con id: ${id} ha sido eliminado`);
     }, false);
 
     sol.open('POST', '../PHP/Funciones.php',true);
     sol.send(datos);
-    verUsuariosMensaje(`El empleado con id: ${id} ha sido eliminado`);
 }
