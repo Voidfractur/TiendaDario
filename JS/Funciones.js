@@ -164,3 +164,15 @@ function eliminarEmpleado(id) {
     sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
+
+function vender() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`eliminarEmpleado`, `${id}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
