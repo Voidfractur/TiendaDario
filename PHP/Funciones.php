@@ -66,6 +66,7 @@ if(isset($_POST['signin'])) {
     }
 }
 
+//CREACIÓN DE UN NUEVO EMPLEADO
 if(isset($_POST['nuevoUsuario'])) {
     require_once 'Persona.php';
     require_once 'Usuario.php';
@@ -110,7 +111,7 @@ if(isset($_POST['verUsuarios'])) {
     $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per");
     if($consult->num_rows>0) {
         $tabla = <<<HDOC
-            <form class="d-flex" style='margin-top: 20px; margin-bottom = 20px;'>
+            <form class="d-flex" action='javascript:nuevoEmpleado();' style='margin-top: 20px; margin-bottom = 20px;'>
                 <input type="button" value="Nuevo empleado" class='btn btn-success'>
             </form>
             <table class="table">
@@ -239,7 +240,7 @@ if(isset($_POST['detalleUsuario'])) {
 
 //MODIFICAR EL USUARIO: VISTA.
 if(isset($_POST['vistaModificar'])) {
-    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['vistaModificar']);
+    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, e.puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['vistaModificar']);
     if($consult->num_rows>0) {
         $ren = $consult->fetch_array(MYSQLI_ASSOC);
         $datosUsuario = <<<HDOC
@@ -257,7 +258,7 @@ if(isset($_POST['vistaModificar'])) {
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Nombre</div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]'>
+                        <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]' required>
                         <label for="nombre">Nombre</label>
                     </div>
                 </div>
@@ -266,7 +267,7 @@ if(isset($_POST['vistaModificar'])) {
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Paterno</div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]'>
+                        <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]' required>
                         <label for="paterno">Apellido Paterno</label>
                     </div>
                 </div>
@@ -275,7 +276,7 @@ if(isset($_POST['vistaModificar'])) {
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Paterno</div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]'>
+                        <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]' required>
                         <label for="materno">Apellido Materno</label>
                     </div>
                 </div>
@@ -283,8 +284,8 @@ if(isset($_POST['vistaModificar'])) {
             <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Sexo</div>
-                    <select class="form-select" aria-label="Default select example" id='sexo'>
-                        <option selected></option>
+                    <select class="form-select" aria-label="Default select example" id='sexo' required>
+                        <option value=''>Seleccione un sexo</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Femenino">Femenino</option>
                     </select>
@@ -294,7 +295,7 @@ if(isset($_POST['vistaModificar'])) {
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Correo</div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]'>
+                        <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]' required>
                         <label for="correo">Correo Electrónico</label>
                     </div>
                 </div>
@@ -303,8 +304,17 @@ if(isset($_POST['vistaModificar'])) {
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">Telefono</div>
                     <div class="form-floating mb-3">
-                        <input type="number" class="form-control" id="telefono" placeholder="Teléfono" value='$ren[telefono]'>
+                        <input type="number" class="form-control" id="telefono" placeholder="Teléfono" value='$ren[telefono]' required>
                         <label for="telefono">Teléfono</label>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Puesto</div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="puesto" placeholder="Puesto" value='$ren[puesto]' required>
+                        <label for="puesto">Puesto</label>
                     </div>
                 </div>
             </li>
@@ -339,5 +349,5 @@ if(isset($_POST['modificar'])) {
         // $per->setFotoPerfil($contenido);
     }
     $persona = $cnn->query("UPDATE persona SET $cadArchi ap_per = '". $per->getPaterno(). "', am_per = '".$per->getMaterno(). "', nombre_per = '".$per->getNombre(). "', sexo_per = '".$per->getSexo(). "', telefono_per = ".$per->getTelefono(). ", correo_per = '".$per->getCorreo(). "' WHERE id_per = ". $_POST['modificar']);
-    var_dump($persona);
+    $cnn->query("UPDATE empleado SET puesto_emp = '". $_POST['puesto']. "' WHERE cve_per = ". $_POST['modificar']);
 }
