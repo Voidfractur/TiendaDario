@@ -97,7 +97,27 @@ function vistaModificar(id) {
 }
 
 function modificar(id) {
-
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`modificar`, `${id}`);
+    let form = document.querySelector("#form");
+    let combo = document.getElementById("sexo");
+    let sexo = combo.options[combo.selectedIndex].text;
+    datos.append(`nombre`,form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sexo}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    if(form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+        console.log(e.target.responseText);
+    }, false);
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
 }
 
 function eliminarEmpleado(id) {

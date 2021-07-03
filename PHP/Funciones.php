@@ -107,9 +107,12 @@ if(isset($_POST['nuevoUsuario'])) {
 }
 
 if(isset($_POST['verUsuarios'])) {
-    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil FROM empleado e join persona p on e.cve_per = p.id_per");
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per");
     if($consult->num_rows>0) {
         $tabla = <<<HDOC
+            <form class="d-flex" style='margin-top: 20px; margin-bottom = 20px;'>
+                <input type="button" value="Nuevo empleado" class='btn btn-success'>
+            </form>
             <table class="table">
                 <thead>
                     <tr>
@@ -118,6 +121,8 @@ if(isset($_POST['verUsuarios'])) {
                         <th scope="col">Nombre</th>
                         <th scope="col">Paterno</th>
                         <th scope="col">Materno</th>
+                        <th scope="col">Fecha de contratación</th>
+                        <th scope="col">Puesto</th>
                         <th scope="col">Acciones</th>
                         </tr>
                     </thead>
@@ -148,6 +153,8 @@ if(isset($_POST['verUsuarios'])) {
                     <td>$ren[nombre]</td>
                     <td>$ren[paterno]</td>
                     <td>$ren[materno]</td>
+                    <td>$ren[fecha]</td>
+                    <td>$ren[puesto]</td>
                     <td>$acciones</td>
                 </tr>
             HDOC;
@@ -159,7 +166,7 @@ if(isset($_POST['verUsuarios'])) {
 }
 
 if(isset($_POST['detalleUsuario'])) {
-    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, foto_per as foto, usuario_emp as usuario FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['detalleUsuario']);
+    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, foto_per as foto, usuario_emp as usuario, fechain_emp as fecha, puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['detalleUsuario']);
     if($consult->num_rows>0) {
         $datosUsuario = <<<HDOC
             <ol class="list-group list-group-numbered">
@@ -211,6 +218,18 @@ if(isset($_POST['detalleUsuario'])) {
                             $ren[usuario]
                     </div>
                 </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Fecha de contratación</div>
+                            $ren[fecha]
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Puesto</div>
+                            $ren[puesto]
+                    </div>
+                </li>
             HDOC;
         }
         $datosUsuario .= "</ol> <button type='button' onclick='verUsuarios();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button>";
@@ -222,67 +241,103 @@ if(isset($_POST['detalleUsuario'])) {
 if(isset($_POST['vistaModificar'])) {
     $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['vistaModificar']);
     if($consult->num_rows>0) {
+        $ren = $consult->fetch_array(MYSQLI_ASSOC);
         $datosUsuario = <<<HDOC
-            <form action='javascript:modificar($_POST[vistaModificar]);'>
+            <form action='javascript:modificar($ren[persona]);' id='form'>
             <ol class="list-group list-group-numbered">
         HDOC;
-        while($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
-            $datosUsuario .= <<<HDOC
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Foto</div>
-                        <input type='file' name='archivo' id='archivo'>
+        $datosUsuario .= <<<HDOC
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Foto</div>
+                    <input type='file' name='file' id='file'>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Nombre</div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]'>
+                        <label for="nombre">Nombre</label>
                     </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Nombre</div>
-                            <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]'>
-                                <label for="nombre">Nombre</label>
-                            </div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Paterno</div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]'>
+                        <label for="paterno">Apellido Paterno</label>
                     </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Paterno</div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]'>
-                            <label for="paterno">Apellido Paterno</label>
-                        </div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Paterno</div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]'>
+                        <label for="materno">Apellido Materno</label>
                     </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Paterno</div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]'>
-                            <label for="materno">Apellido Materno</label>
-                        </div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Sexo</div>
+                    <select class="form-select" aria-label="Default select example" id='sexo'>
+                        <option selected></option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Femenino">Femenino</option>
+                    </select>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Correo</div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]'>
+                        <label for="correo">Correo Electrónico</label>
                     </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Sexo</div>
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>Open this select menu</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                        </select>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Telefono</div>
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="telefono" placeholder="Teléfono" value='$ren[telefono]'>
+                        <label for="telefono">Teléfono</label>
                     </div>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Apellidos</div>
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]'>
-                            <label for="correo">Correo Electrónico</label>
-                        </div>
-                    </div>
-                </li>
-            HDOC;
-        }
+                </div>
+            </li>
+        HDOC;
         $datosUsuario .= "</ol> <button type='button' onclick='verUsuarios();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button> <input type='submit' name='update' id='update' value='Actualizar' class='btn btn-success'> </form>";
         echo $datosUsuario;
     }
+}
+
+if(isset($_POST['modificar'])) {
+    require_once 'Persona.php';
+    date_default_timezone_set("America/Mexico_City");
+    $per = new Persona();
+    $per->setNombre($_POST['nombre']);
+    $per->setPaterno($_POST['paterno']);
+    $per->setMaterno($_POST['materno']);
+    $per->setSexo($_POST['sexo']);
+    $per->setTelefono($_POST['telefono']);
+    $per->setCorreo($_POST['correo']);
+    $tipo = "";
+    $cadArchi = "";
+    if (isset($_FILES["fotoPerfil"]["tmp_name"]) && $_FILES["fotoPerfil"]["tmp_name"] != "") {
+        $archivo = $_FILES["fotoPerfil"]["tmp_name"];
+        $tipo = $_FILES["fotoPerfil"]["type"];
+        $tam = $_FILES['fotoPerfil']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+        $cadArchi = "foto_per='$contenido', tipoarchivo_per='$tipo',";
+        // $per->setFotoPerfil($contenido);
+    }
+    $persona = $cnn->query("UPDATE persona SET $cadArchi ap_per = '". $per->getPaterno(). "', am_per = '".$per->getMaterno(). "', nombre_per = '".$per->getNombre(). "', sexo_per = '".$per->getSexo(). "', telefono_per = ".$per->getTelefono(). ", correo_per = '".$per->getCorreo(). "' WHERE id_per = ". $_POST['modificar']);
+    var_dump($persona);
 }
