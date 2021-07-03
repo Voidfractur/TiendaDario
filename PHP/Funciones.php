@@ -80,7 +80,7 @@ if(isset($_POST['nuevoUsuario'])) {
     $per->setTelefono($_POST['telefono']);
     $per->setCorreo($_POST['correo']);
     $tipo = "";
-    if ($_FILES["fotoPerfil"]["tmp_name"] != "") {
+    if (isset($_FILES["fotoPerfil"]["tmp_name"]) && $_FILES["fotoPerfil"]["tmp_name"] != "") {
         $archivo = $_FILES["fotoPerfil"]["tmp_name"];
         $tipo = $_FILES["fotoPerfil"]["type"];
         $tam = $_FILES['fotoPerfil']["size"];
@@ -93,26 +93,21 @@ if(isset($_POST['nuevoUsuario'])) {
     }
     $persona = $cnn->query("INSERT INTO persona values(null,'". $per->getPaterno(). "','".$per->getMaterno(). "','".$per->getNombre(). "','".$per->getSexo(). "',".$per->getTelefono(). ",'".$per->getCorreo(). "','". $per->getFotoPerfil(). "', '". $tipo ."')");
     $consult = $cnn->query("SELECT max(id_per) as id FROM persona");
-    $id = "";
-    if($consult->num_rows>0) {
-        while ($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
-            $id = $ren['id'];
-        }
-    }
+    $id = $consult->fetch_array(MYSQLI_ASSOC)['id'];
     $user->setNombreUsuario($_POST['username']);
     $user->setContrasenia($_POST['password']);
     $user->setFechaRegistro(date("Y-m-d"));
+    $user->setPuesto($_POST['repeat']);
 
-    $nuevoUsuario = $cnn->query("INSERT INTO empleado VALUES(null, '". $user->getNombreUsuario() ."','". $user->getContrasenia() ."','". $user->getFechaRegistro() ."', ". $id .")");
-    echo $nuevoUsuario;
+    $nuevoUsuario = $cnn->query("INSERT INTO empleado VALUES(null, '". $user->getNombreUsuario() ."','". $user->getContrasenia() ."','". $user->getPuesto() ."', 'Contratado', '". $user->getFechaRegistro(). "', ". $id .")");
 }
 
 if(isset($_POST['verUsuarios'])) {
-    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per");
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto, status_emp as statusemp FROM empleado e join persona p on e.cve_per = p.id_per");
     if($consult->num_rows>0) {
         $tabla = <<<HDOC
             <form class="d-flex" action='javascript:nuevoEmpleado();' style='margin-top: 20px; margin-bottom = 20px;'>
-                <input type="button" value="Nuevo empleado" class='btn btn-success'>
+                <input type="submit" value="Nuevo empleado" class='btn btn-success'>
             </form>
             <table class="table">
                 <thead>
@@ -131,8 +126,9 @@ if(isset($_POST['verUsuarios'])) {
         HDOC;
         while ($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
             $img = "";
+            if($ren['statusemp'] == "Despedido") { continue; }
             if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-            else { $img = "noPhoto.png"; }
+            else { $img = "../Images/noPhoto.png"; }
             $acciones = "";
             if($_POST['usuarioLogueado'] == $ren['empleado']) {
                 $acciones = <<<HDOC
@@ -143,7 +139,7 @@ if(isset($_POST['verUsuarios'])) {
             else {
                 $acciones = <<<HDOC
                     <button type="button" onclick='mostrarDetalles($ren[empleado])' class="btn btn-secondary">Detalles</button>
-                    <button type="button" onclick='editarEmpleado($ren[empleado])' class="btn btn-primary">Editar</button>
+                    <button type="button" onclick='vistaModificar($ren[empleado])' class="btn btn-primary">Editar</button>
                     <button type="button" onclick='eliminarEmpleado($ren[empleado])' class="btn btn-danger">Eliminar</button>
                 HDOC;
             }
@@ -350,4 +346,8 @@ if(isset($_POST['modificar'])) {
     }
     $persona = $cnn->query("UPDATE persona SET $cadArchi ap_per = '". $per->getPaterno(). "', am_per = '".$per->getMaterno(). "', nombre_per = '".$per->getNombre(). "', sexo_per = '".$per->getSexo(). "', telefono_per = ".$per->getTelefono(). ", correo_per = '".$per->getCorreo(). "' WHERE id_per = ". $_POST['modificar']);
     $cnn->query("UPDATE empleado SET puesto_emp = '". $_POST['puesto']. "' WHERE cve_per = ". $_POST['modificar']);
+}
+
+if(isset($_POST['interfazUsuario'])) {
+    header('Location: ../HTML/SignUp.html');
 }

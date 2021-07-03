@@ -108,6 +108,18 @@ function modificar(id) {
     verUsuariosMensaje(`Empleado ${form.nombre.value} actualizado`);
 }
 
+function nuevoEmpleado() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append('interfazUsuario', 'nuevoUsuario');
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
+}
+
 function nuevoUsuario() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -131,15 +143,25 @@ function nuevoUsuario() {
     }
     datos.append(`username`, form.username.value);
     datos.append(`password`, form.password.value);
-    datos.append(`repeat`, form.repeatPass.value);
+    datos.append(`repeat`, form.puesto.value);
     sol.addEventListener('load', function(e) {
         console.log(e.target.responseText);
     }, false);
 
     sol.open('POST', '../PHP/Funciones.php',true);
     sol.send(datos);
+    verUsuariosMensaje(`Usuario nuevo creado: ${form.nombre.value}`);
 }
 
 function eliminarEmpleado(id) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`eliminarEmpleado`, `${id}`);
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+    }, false);
 
+    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.send(datos);
+    verUsuariosMensaje(`El empleado con id: ${id} ha sido eliminado`);
 }

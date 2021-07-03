@@ -4,6 +4,7 @@ class Usuario {
     private $nombreUsuario;
     private $contrasenia;
     private $fechaRegistro;
+    private $puesto;
     
     public function __construct() {
 
@@ -31,5 +32,13 @@ class Usuario {
 
     public function getFechaRegistro() {
         return $this->fechaRegistro;
+    }
+
+    public function setPuesto($puesto) {
+        $this->puesto = $puesto;
+    }
+
+    public function getPuesto() {
+        return $this->puesto;
     }
 }

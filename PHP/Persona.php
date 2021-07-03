@@ -9,7 +9,7 @@ class Persona {
     private $fotoPerfil;
 
     public function __construct() {
-
+        $this->fotoPerfil = null;
     }
 
     public function setNombre($nombre) {
