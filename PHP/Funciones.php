@@ -351,3 +351,7 @@ if(isset($_POST['modificar'])) {
 if(isset($_POST['interfazUsuario'])) {
     header('Location: ../HTML/SignUp.html');
 }
+
+if(isset($_POST['eliminarEmpleado'])) {
+    $cnn->query("UPDATE empleado SET status_emp = 'Despedido' WHERE id_emp = ". $_POST['eliminarEmpleado']);
+}
