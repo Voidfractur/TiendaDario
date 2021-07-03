@@ -7,7 +7,7 @@ function login() {
         document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -26,7 +26,7 @@ function inicioSesion() {
         document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -38,7 +38,7 @@ function verUsuarios() {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -56,7 +56,7 @@ function verUsuariosMensaje(mensaje) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -67,7 +67,7 @@ function mostrarDetalles(id) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -78,7 +78,7 @@ function vistaModificar(id) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -104,7 +104,7 @@ function modificar(id) {
         // document.getElementsByClassName(`main`)[0].innerHTML = menu;
         verUsuariosMensaje(`Empleado ${form.nombre.value} actualizado`);
     }, false);
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -116,7 +116,7 @@ function nuevoEmpleado() {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
 
@@ -148,7 +148,7 @@ function nuevoUsuario() {
         console.log(e.target.responseText);
     }, false);
 
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
     verUsuariosMensaje(`Usuario nuevo creado: ${form.nombre.value}`);
 }
@@ -161,6 +161,6 @@ function eliminarEmpleado(id) {
         verUsuariosMensaje(`El empleado con id: ${id} ha sido eliminado`);
     }, false);
 
-    sol.open('POST', '../PHP/Funciones.php',true);
+    sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }

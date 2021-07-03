@@ -1,5 +1,6 @@
 <?php
 require_once 'Conexion.lib.php';
+require_once 'Interfaz.php';
 if(isset($_SESSION['autenticacion']) && $_SESSION['autenticacion'] == 1) {
     echo $sistema;
     return;
@@ -8,58 +9,13 @@ $sistema = "";
 $cnn = conexion();
 
 if(isset($_POST['mostrarLogin'])) {
-    header('Location: ../HTML/Login.html');
+    echo mostrarLogin();
 }
 
 if(isset($_POST['signin'])) {
     $login = $cnn->query("SELECT * FROM empleado WHERE usuario_emp = '". $_POST['username'] ."' AND contrasenia_emp = '". $_POST['password']. "'");
-    if($login->num_rows>0) {
-        while ($ren = $login->fetch_array(MYSQLI_ASSOC)) {
-            $id = $ren['id_emp'];
-            session_start();
-            $_SESSION['id_user'] = $ren['id_emp'];
-            $_SESSION['username'] = $ren['usuario_emp'];
-            $_SESSION['autenticacion'] = 1;
-        }
-        echo <<<HDOC
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-                    <a class="navbar-brand" onclick="verUsuarios();" style="cursor: pointer;">Usuarios</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-            
-                    <a class="navbar-brand" onclick="verClientes();" style="cursor: pointer;">Clientes</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-            
-                    <a class="navbar-brand" style="cursor: pointer;">Productos</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-            
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Ventas
-                            </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="#">Vender un producto</a></li>
-                                    <li><a class="dropdown-item" href="#">Ventas hechas a crédito</a></li>
-                                    <!-- <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li> -->
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                    <form class="d-flex">
-                        <input type="submit" value="Cerrar sesión" id='$id' class="usuario_logueado">
-                    </form>
-                </div>
-            </nav>
-        HDOC;
+    if($login->num_rows > 0) {
+        echo menu($login);
     }
     else {
         echo "Nombre de usuario o contraseña incorrectos";
@@ -104,61 +60,7 @@ if(isset($_POST['nuevoUsuario'])) {
 
 if(isset($_POST['verUsuarios'])) {
     $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, e.id_emp as empleado, p.id_per as persona, foto_per as perfil, fechain_emp as fecha, puesto_emp as puesto, status_emp as statusemp FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.status_emp = 'Contratado'");
-    if($consult->num_rows>0) {
-        $tabla = <<<HDOC
-            <form class="d-flex" action='javascript:nuevoEmpleado();' style='margin-top: 20px; margin-bottom = 20px;'>
-                <input type="submit" value="Nuevo empleado" class='btn btn-success'>
-            </form>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th>Foto de Perfil</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Paterno</th>
-                        <th scope="col">Materno</th>
-                        <th scope="col">Fecha de contratación</th>
-                        <th scope="col">Puesto</th>
-                        <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        HDOC;
-        while ($ren = $consult->fetch_array(MYSQLI_ASSOC)) {
-            $img = "";
-            // if($ren['statusemp'] == "Despedido") { echo $ren['nombre']; continue; }
-            if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-            else { $img = "../Images/noPhoto.png"; }
-            $acciones = "";
-            if($_POST['usuarioLogueado'] == $ren['empleado']) {
-                $acciones = <<<HDOC
-                    <button type="button" onclick='mostrarDetalles($ren[empleado])' class="btn btn-secondary">Detalles</button>
-                    <button type="button" onclick='vistaModificar($ren[empleado])' class="btn btn-primary">Editar</button>
-                HDOC;
-            }
-            else {
-                $acciones = <<<HDOC
-                    <button type="button" onclick='mostrarDetalles($ren[empleado]);' class="btn btn-secondary">Detalles</button>
-                    <button type="button" onclick='vistaModificar($ren[empleado]);' class="btn btn-primary">Editar</button>
-                    <button type="button" onclick='eliminarEmpleado($ren[empleado]);' class="btn btn-danger">Eliminar</button>
-                HDOC;
-            }
-            $tabla .= <<<HDOC
-                <tr id='$ren[empleado]'>
-                    <th scope="row">$ren[empleado]</th>
-                    <td><img src='$img' width='80px' alt=''/></td>
-                    <td>$ren[nombre]</td>
-                    <td>$ren[paterno]</td>
-                    <td>$ren[materno]</td>
-                    <td>$ren[fecha]</td>
-                    <td>$ren[puesto]</td>
-                    <td>$acciones</td>
-                </tr>
-            HDOC;
-        }
-        $tabla .= "<tbodt></tbodt><table></table>";
-        echo $tabla;
-    }
+    if($consult->num_rows>0) { echo verUsuarios($consult); }
     else { echo "Sin datos"; }
 }
 
