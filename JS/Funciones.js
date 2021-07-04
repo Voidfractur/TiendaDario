@@ -550,5 +550,25 @@ function comprarMisProductosCredito(id_cliente) {
 }
 
 function verCredito() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`vercredito`, `credito`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
     
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function verDetallesCredito(id_cre) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`detallescredito`, `${id_cre}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
 }

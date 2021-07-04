@@ -229,3 +229,36 @@ if(isset($_POST['pagarClienteExistenteCredito'])) {
     $ticket = $cnn->query("INSERT INTO ticket VALUES(null, '". date("Y-m-d"). "', ". $_POST['total'] .", ". $_POST['empleado']. ", ". $_POST['pagarClienteExistenteCredito']. ")");
     echo $ticket;
 }
+
+if(isset($_POST['vercredito'])) {
+    $creditos = $cnn->query("SELECT cli.id_cli as cliente, nombre_per as persona,
+    nombre_pro as producto, fechaventa_tic as fechacompra, 
+    total_tic as total, pagoinicial as inicial, 
+    total_tic - pagoinicial as restante,
+    c.id_cre as credito
+    FROM credito c join ticket t
+    on c.cve_tic = t.id_tic join renglonticket rt
+    on rt.cve_tic = t.id_tic join producto p
+    on rt.cve_pro = p.id_pro join cliente cli
+    on t.cve_cli = cli.id_cli join persona per
+    on cli.cve_per = per.id_per
+    WHERE c.status_cre = 'En crédito'
+    group by t.id_tic;");
+    if($creditos->num_rows > 0) {
+        echo mostrarCreditos($creditos);
+    }
+    else { echo "Sin datos"; }
+}
+
+if(isset($_POST['detallescredito'])) {
+    $creditos = $cnn->query("SELECT cre.id_cre as credito, rt.cve_tic as ticket, cantidad_ren as cantidad,
+    nombre_pro as producto, total_tic - pagoinicial as restante, cantidad_ren * preciov_ren as TotalProducto, preciov_ren as preciounidad
+    FROM credito cre join ticket t
+    on cre.cve_tic = t.id_tic join renglonticket rt
+    on rt.cve_tic = t.id_tic join producto p
+    on rt.cve_pro = p.id_pro WHERE cre.id_cre = ". $_POST['detallescredito'] . "");
+    if($creditos->num_rows > 0) {
+        echo detallesCredito($creditos);
+    }
+    else { echo "Sin datos"; }
+}

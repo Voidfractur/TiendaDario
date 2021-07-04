@@ -527,3 +527,72 @@ function clientesCredito($clientes) {
     $tabla .= "<tbodt></tbodt><table></table>";
     return $tabla;
 }
+
+function mostrarCreditos($creditos) {
+    $tabla = <<<HDOC
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Fecha de compra</th>
+                <th scope="col">Total</th>
+                <th scope="col">Pago inicial</th>
+                <th scope="col">Restante</th>
+                <th scope="col">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+    HDOC;
+    while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
+        $acciones = <<<HDOC
+            <button type="button" onclick='verDetallesCredito($ren[credito])' class="btn btn-primary">Detalles</button>
+        HDOC;
+        $tabla .= <<<HDOC
+            <tr id='$ren[credito]'>
+                <th scope="row">$ren[cliente]</th>
+                <td>$ren[persona]</td>
+                <td>$ren[producto]</td>
+                <td>$ren[fechacompra]</td>
+                <td>$ren[total]</td>
+                <td>$ren[inicial]</td>
+                <td>$ren[restante]</td>
+                <td>$acciones</td>
+            </tr>
+        HDOC;
+    }
+    $tabla .= "<tbodt></tbodt><table></table>";
+    return $tabla;
+}
+
+function detallesCredito($creditos) {
+    $tabla = <<<HDOC
+    <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
+    <button type="button" onclick='liquidarCuenta()' class="btn btn-success">Liquidar</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Precio por unidad</th>
+                <th scope="col">Cantidad comprada</th>
+                <th scope="col">Total de cada producto</th>
+            </tr>
+        </thead>
+        <tbody>
+    HDOC;
+    while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
+        $tabla .= <<<HDOC
+            <tr id='$ren[credito]'>
+                <th scope="row">$ren[credito]</th>
+                <td>$ren[producto]</td>
+                <td>$ren[preciounidad]</td>
+                <td>$ren[cantidad]</td>
+                <td>$ren[TotalProducto]</td>
+            </tr>
+        HDOC;
+    }
+    $tabla .= "<tbodt></tbodt><table></table>";
+    return $tabla;
+}
