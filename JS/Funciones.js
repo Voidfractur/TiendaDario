@@ -5,6 +5,7 @@ var contenidoProductos = "";
 var tuplas = {
     'datos' :[]
   };
+var total = 0;
 function login() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -171,7 +172,7 @@ function eliminarEmpleado(id) {
     sol.send(datos);
 }
 
-function vender() {
+function venderSinMensaje() {
     productos = [];
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -190,6 +191,31 @@ function vender() {
     sol.send(datos);
 }
 
+function venderMensaje(mensaje) {
+    productos = [];
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    mensaje = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    datos.append(`venderProductos`, `vender`);
+    contenidoProductos = "";
+    tablaProductos = "";
+    tuplas = {
+        'datos' :[]
+      };
+    sol.addEventListener('load', function(e) {
+        tablaProductos = e.target.responseText;
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
 function buscarProducto() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -201,7 +227,7 @@ function buscarProducto() {
             agregarProducto(form.producto.value);
         }
         else {
-            document.getElementsByClassName(`main`)[0].innerHTML = menu + "<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> Producto no encontrado.<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>" + tablaProductos;
+            document.getElementsByClassName(`main`)[0].innerHTML = menu + "<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> Producto no encontrado o sin existencia.<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>" + tablaProductos + contenidoProductos;
         }
     }, false);
 
@@ -265,11 +291,13 @@ function comprarContado() {
         alert("No hay productos");
     }
     else {
-        let tr = document.getElementsByTagName(`tr`);
-        for (let i = 1; i < tr.length; i++) {
-            let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
-            tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
-       };       
+        if(tuplas.datos.length == 0) {
+            let tr = document.getElementsByTagName(`tr`);
+            for (let i = 1; i < tr.length; i++) {
+                let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
+                tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
+            };
+        }   
     //    json= JSON.stringify(obj);
         var datos = new FormData();
         var sol = new XMLHttpRequest;
@@ -284,10 +312,34 @@ function comprarContado() {
     }
 }
 
+function comprarCredito() {
+    if(document.getElementsByTagName(`tr`).length == 1) {
+        alert("No hay productos");
+    }
+    else {
+        if(tuplas.datos.length == 0) {
+            let tr = document.getElementsByTagName(`tr`);
+            for (let i = 1; i < tr.length; i++) {
+                let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
+                tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
+            };
+        }   
+    //    json= JSON.stringify(obj);
+        var datos = new FormData();
+        var sol = new XMLHttpRequest;
+        datos.append(`comprarCredito`, `credito`);
+        sol.addEventListener('load', function(e) {
+            document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+            agregarProductos();
+        }, false);
+    
+        sol.open('POST', '../PHP/Controlador.php',true);
+        sol.send(datos);
+    }
+}
+
 function agregarProductos() {
     let lista = document.getElementById(`productosAComprar`);
-    // console.log(tuplas.datos.length);
-    // console.log(tuplas.datos[0]); //correct
     let totalAPagar = 0;
     for(let i = 0; i < tuplas.datos.length; i++) {
         console.log("Entra al for");
@@ -314,20 +366,31 @@ function agregarProductos() {
     `;
 }
 
+function clienteRegistrado() {
+    total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`clientesRegistrados`, `clientes`);
+    sol.addEventListener('load', function(e) {
+        if(e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; }
+        else { alert("No hay clientes registrados todavía"); }
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
 function pagarSinRegistro() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
     datos.append(`pagarContado`, `contado`);
-    let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
     sol.addEventListener('load', function(e) {
-        // document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
         for(let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
-        console.log(e.target.responseText);
-
+        venderMensaje("La venta se ha realizado exitosamente");
     }, false);
     
     sol.open('POST', '../PHP/Controlador.php',true);
@@ -342,10 +405,150 @@ function renglonTicket(cantidad, precio, codigoBarras) {
     datos.append(`codigobarras`, codigoBarras);
     datos.append(`renglonticket`, `renglonticket`);
     sol.addEventListener('load', function(e) {
-        console.log(e.target.responseText);
-
+        console.log(e.target.responseText)
     }, false);
     
     sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
+}
+
+function pagarNuevoCliente() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let sex = null;
+    let form = document.querySelector("#formNuevoUsuario");
+    if(document.getElementById(`woman`).checked) {
+        sex = document.getElementById(`woman`).value;
+    }
+    else if(document.getElementById(`man`).checked) {
+        sex = document.getElementById(`man`).value;
+    }
+    datos.append(`pagarRegistro`, `newUser`);
+    datos.append(`nombre`, form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sex}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
+    datos.append(`total`, total);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    if(form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    sol.addEventListener('load', function(e) {
+        for(let i = 0; i < tuplas.datos.length; i++) {
+            renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
+        }
+        venderMensaje("La venta y el registro del cliente fue exitosa");
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function comprarMisProductos(id_cli) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`pagarClienteExistente`, `${id_cli}`);
+    datos.append(`total`, total);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    sol.addEventListener('load', function(e) {
+        for(let i = 0; i < tuplas.datos.length; i++) {
+            renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
+        }
+        venderMensaje("La venta se ha realizado exitosamente");
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function pagarNuevoClienteCredito() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let sex = null;
+    let form = document.querySelector("#formNuevoUsuario");
+    let pagoInicial = "";
+    if(form.pagoInicial.value != "") { pagoInicial = form.pagoInicial.value; }
+    if(document.getElementById(`woman`).checked) {
+        sex = document.getElementById(`woman`).value;
+    }
+    else if(document.getElementById(`man`).checked) {
+        sex = document.getElementById(`man`).value;
+    }
+    datos.append(`pagarRegistro`, `newUser`);
+    datos.append(`nombre`, form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sex}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
+    datos.append(`total`, total);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    if(form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    sol.addEventListener('load', function(e) {
+        for(let i = 0; i < tuplas.datos.length; i++) {
+            renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
+        }
+        agregarCredito(pagoInicial);
+        venderMensaje("La venta y el registro del cliente fue exitosa");
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function agregarCredito(pagoInicial) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`pagoinicial`, `${pagoInicial}`);
+    datos.append(`agregarcreditonuevo`, `credito`);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function clienteRegistradoCredito() {
+    total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`clientesRegistradosCredito`, `clientes`);
+    sol.addEventListener('load', function(e) {
+        if(e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; }
+        else { alert("No hay clientes registrados todavía"); }
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function comprarMisProductosCredito(id_cliente) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let pagoInicial = document.getElementById(`pagoInicial`).value;
+    datos.append(`pagarClienteExistenteCredito`, `${id_cliente}`);
+    datos.append(`total`, total);
+    datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+    sol.addEventListener('load', function(e) {
+        for(let i = 0; i < tuplas.datos.length; i++) {
+            renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
+        }
+        agregarCredito(pagoInicial);
+        venderMensaje("La venta se a crédito se ha realizado exitosamente");
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function verCredito() {
+    
 }

@@ -117,7 +117,7 @@ if(isset($_POST['venderProductos'])) {
 }
 
 if(isset($_POST['agregar'])) {
-    $consultaProducto = $cnn->query("SELECT * FROM producto WHERE codigo_pro = '". $_POST['codigoBarras']. "'");
+    $consultaProducto = $cnn->query("SELECT * FROM producto WHERE codigo_pro = '". $_POST['codigoBarras']. "' AND status_pro = 1");
     if($consultaProducto->num_rows>0) { echo true; }
     else { echo false; }
 }
@@ -131,8 +131,58 @@ if(isset($_POST['comprarContado'])) {
     echo vistaComprarContado();
 }
 
+if(isset($_POST['clientesRegistrados'])) {
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, c.id_cli as cliente, p.id_per as persona, foto_per as perfil FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.tipo_cli = 'Cliente particular'");
+    if($consult->num_rows > 0) { echo clientes($consult); }
+    else { echo 0; }
+}
+
 if(isset($_POST['pagarContado'])) {
     $idCliente = $cnn->query("SELECT id_cli as id FROM cliente WHERE tipo_cli = 'Público general' LIMIT 1");
+    if($idCliente->num_rows > 0) {
+        $idCliente = $idCliente->fetch_array(MYSQLI_ASSOC)['id'];
+        date_default_timezone_set("America/Mexico_City");
+        $ticket = $cnn->query("INSERT INTO ticket VALUES(null, '". date("Y-m-d"). "', ". $_POST['total'] .", ". $_POST['empleado']. ", ". $idCliente. ")");
+        echo $ticket;
+    }
+}
+
+if(isset($_POST['comprarCredito'])) {
+    echo vistaComprarCredito();
+}
+
+if(isset($_POST['pagarRegistro'])) {
+    require_once 'Persona.php';
+    require_once 'Cliente.php';
+    date_default_timezone_set("America/Mexico_City");
+    $per = new Persona();
+    $cliente = new Cliente();
+    $per->setNombre($_POST['nombre']);
+    $per->setPaterno($_POST['paterno']);
+    $per->setMaterno($_POST['materno']);
+    $per->setSexo($_POST['sexo']);
+    $per->setTelefono($_POST['telefono']);
+    $per->setCorreo($_POST['correo']);
+    $tipo = "";
+    if (isset($_FILES["fotoPerfil"]["tmp_name"]) && $_FILES["fotoPerfil"]["tmp_name"] != "") {
+        $archivo = $_FILES["fotoPerfil"]["tmp_name"];
+        $tipo = $_FILES["fotoPerfil"]["type"];
+        $tam = $_FILES['fotoPerfil']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+        $per->setFotoPerfil($contenido);
+    }
+    $persona = $cnn->query("INSERT INTO persona values(null,'". $per->getPaterno(). "','".$per->getMaterno(). "','".$per->getNombre(). "','".$per->getSexo(). "',".$per->getTelefono(). ",'".$per->getCorreo(). "','". $per->getFotoPerfil(). "', '". $tipo ."')");
+    $consult = $cnn->query("SELECT max(id_per) as id FROM persona");
+    $id = $consult->fetch_array(MYSQLI_ASSOC)['id'];
+    $cliente->setFechaRegistro(date("Y-m-d"));
+    $cliente->setHoraRegistro(date("H:i:s"));
+    $cliente->setTipoCliente("Cliente particular");
+    $nuevoCliente = $cnn->query("INSERT INTO cliente VALUES(null, '". $cliente->getFechaRegistro(). "', '". $cliente->getHoraRegistro(). "', '". $cliente->getTipoCliente(). "', $id)");
+    $idCliente = $cnn->query("SELECT max(id_cli) as id FROM cliente LIMIT 1");
     if($idCliente->num_rows > 0) {
         $idCliente = $idCliente->fetch_array(MYSQLI_ASSOC)['id'];
         date_default_timezone_set("America/Mexico_City");
@@ -150,4 +200,32 @@ if(isset($_POST['renglonticket'])) {
         $renglonticket = $cnn->query("INSERT INTO renglonticket VALUES(null, ". $_POST['cantidad']. ", ". $_POST['precio']. ", $idProducto, $idTicket)");
         echo $renglonticket;
     }
+}
+
+if(isset($_POST['pagarClienteExistente'])) {
+    date_default_timezone_set("America/Mexico_City");
+    $ticket = $cnn->query("INSERT INTO ticket VALUES(null, '". date("Y-m-d"). "', ". $_POST['total'] .", ". $_POST['empleado']. ", ". $_POST['pagarClienteExistente']. ")");
+    echo $ticket;
+}
+
+if(isset($_POST['agregarcreditonuevo'])) {
+    require_once "Credito.php";
+    date_default_timezone_set("America/Mexico_City");
+    $credito = new Credito($_POST['pagoinicial'], "En crédito");
+    $idTicket = $cnn->query("SELECT max(id_tic) AS id FROM ticket");
+    $idTicket = $idTicket->fetch_array(MYSQLI_ASSOC)['id'];
+    $creditoAgregado = $cnn->query("INSERT INTO credito VALUES(null, ". $credito->getPagoInicial(). ", '". $credito->getStatus() ."', $idTicket)");
+    echo $creditoAgregado;
+}
+
+if(isset($_POST['clientesRegistradosCredito'])) {
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, c.id_cli as cliente, p.id_per as persona, foto_per as perfil FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.tipo_cli = 'Cliente particular'");
+    if($consult->num_rows > 0) { echo clientesCredito($consult); }
+    else { echo 0; }
+}
+
+if(isset($_POST['pagarClienteExistenteCredito'])) {
+    date_default_timezone_set("America/Mexico_City");
+    $ticket = $cnn->query("INSERT INTO ticket VALUES(null, '". date("Y-m-d"). "', ". $_POST['total'] .", ". $_POST['empleado']. ", ". $_POST['pagarClienteExistenteCredito']. ")");
+    echo $ticket;
 }

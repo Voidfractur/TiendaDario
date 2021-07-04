@@ -30,7 +30,7 @@ function menu($datosUsuario) {
                                 Ventas
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" onclick='vender();' style='cursor: pointer;'>Vender un producto</a></li>
+                                <li><a class="dropdown-item" onclick='venderSinMensaje();;' style='cursor: pointer;'>Vender un producto</a></li>
                                 <li><a class="dropdown-item" onclick='verCredito();' style='cursor: pointer;'>Ventas hechas a crédito</a></li>
                                 <!-- <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Something else here</a></li> -->
@@ -325,34 +325,35 @@ function vistaComprarContado() {
                 </div>
             </div>
         </div>
-        <form action="javascript:pagarSinRegistro();" enctype="multipart/form-data" id="form" style='margin-top: 10px;'>
-            <button class="btn btn-link" onclick="vender();">Cancelar</button>
-            <input type="submit" class="btn btn-primary" value="Pagar sin registrarse" id="submit">
-        </form>
+        <div style='margin-top: 10px;'>
+            <button class="btn btn-link" onclick="venderSinMensaje();">Cancelar</button>
+            <button class="btn btn-link" onclick="clienteRegistrado();">Buscar cliente registrado</button>
+            <input type="button" onclick="pagarSinRegistro();" class="btn btn-primary" value="Pagar sin registrarse" id="submit">
+        </div>
         <div class="register" style='margin-top: 30px;'>
             <h1>Nuevo Cliente</h1>
             <hr>
-            <form action="javascript:pagarNuevoCliente();" enctype="multipart/form-data" id="form">
+            <form action="javascript:pagarNuevoCliente();" enctype="multipart/form-data" id="formNuevoUsuario">
                 <div class="inputs firstSection">
                     <label for=""  class="nombre_label">
-                        <span onclick="focusCursor1(this)" class="nombre">Nombre</span>
-                    <input type="text" id="nombre" name="nombre" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                        <span class="nombre">Nombre</span>
+                    <input type="text" id="nombre" name="nombre" autocomplete="off" required  >
                 </label>
                 <label for=""  class="paterno_label">
-                    <span onclick="focusCursor1(this)" class="paterno">Apellido Paterno</span>
-                    <input type="text" id="paterno" name="paterno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <span class="paterno">Apellido Paterno</span>
+                    <input type="text" id="paterno" name="paterno" autocomplete="off" required  >
                 </label>
                 <label for=""  class="materno_label">
-                    <span onclick="focusCursor1(this)" class="materno">Apellido Materno</span>
-                    <input type="text" id="materno" name="materno" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <span class="materno">Apellido Materno</span>
+                    <input type="text" id="materno" name="materno" autocomplete="off" required  >
                 </label>
                 <label for="" class="telefono_label">
-                    <span onclick="focusCursor1(this)" class="telefono">Teléfono</span>
-                    <input type="number" id="telefono" name="telefono" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);" min="0">
+                    <span class="telefono">Teléfono</span>
+                    <input type="number" id="telefono" name="telefono" autocomplete="off" required   min="0">
                 </label>
                 <label for="" class="correo_label">
-                    <span onclick="focusCursor1(this)" class="correo">Correo</span>
-                    <input type="text" id="correo" name="correo" autocomplete="off" required onfocus="movingSpan(this);" onfocusout="resetingSpan(this);">
+                    <span class="correo">Correo</span>
+                    <input type="text" id="correo" name="correo" autocomplete="off" required  >
                 </label>
                 <div class='file-input' style="margin-bottom: 40px;">
                     <input type='file' id="file" name="file">
@@ -369,10 +370,160 @@ function vistaComprarContado() {
             </div>
             <hr class="hr">
             <input type="submit" value="Registrar y pagar" id="submit">
-            <button class="cancel" onclick="verUsuarios();">Cancel</button>
-            <button class="back"onclick="verUsuarios();">Back</button>
         </form>
     </div>
     HDOC;
     return $compra;
+}
+
+function clientes($clientes) {
+    $tabla = <<<HDOC
+    <button type="button" onclick='comprarContado();' class="btn btn-primary">Regresar</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th>Foto de Perfil</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Paterno</th>
+                <th scope="col">Materno</th>
+                <th scope="col">Comprar</th>
+            </tr>
+        </thead>
+        <tbody>
+    HDOC;
+    while ($ren = $clientes->fetch_array(MYSQLI_ASSOC)) {
+        $img = "";
+        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
+        else { $img = "../Images/noPhoto.png"; }
+        $acciones = <<<HDOC
+            <button type="button" onclick='comprarMisProductos($ren[cliente])' class="btn btn-success">Comprar</button>
+        HDOC;
+        $tabla .= <<<HDOC
+            <tr id='$ren[cliente]'>
+                <th scope="row">$ren[cliente]</th>
+                <td><img src='$img' width='80px' alt=''/></td>
+                <td>$ren[nombre]</td>
+                <td>$ren[paterno]</td>
+                <td>$ren[materno]</td>
+                <td>$acciones</td>
+            </tr>
+        HDOC;
+    }
+    $tabla .= "<tbodt></tbodt><table></table>";
+    return $tabla;
+}
+
+function vistaComprarCredito() {
+    $compra = <<<HDOC
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Artículos a comprar
+                    </button>
+                </h2>
+                <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <ol class="list-group list-group-numbered" id='productosAComprar'></ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style='margin-top: 10px;'>
+            <button class="btn btn-link" onclick="venderSinMensaje();">Cancelar</button>
+            <button class="btn btn-link" onclick="clienteRegistradoCredito();">Buscar cliente registrado</button>
+        </div>
+        <div class="register" style='margin-top: 30px;'>
+            <h1>Nuevo Cliente</h1>
+            <hr>
+            <form action="javascript:pagarNuevoClienteCredito();" enctype="multipart/form-data" id="formNuevoUsuario">
+                <div class="inputs firstSection">
+                    <label for=""  class="nombre_label">
+                        <span class="nombre">Nombre</span>
+                    <input type="text" id="nombre" name="nombre" autocomplete="off" required  >
+                </label>
+                <label for=""  class="paterno_label">
+                    <span class="paterno">Apellido Paterno</span>
+                    <input type="text" id="paterno" name="paterno" autocomplete="off" required  >
+                </label>
+                <label for=""  class="materno_label">
+                    <span class="materno">Apellido Materno</span>
+                    <input type="text" id="materno" name="materno" autocomplete="off" required  >
+                </label>
+                <label for="" class="telefono_label">
+                    <span class="telefono">Teléfono</span>
+                    <input type="number" id="telefono" name="telefono" autocomplete="off" required   min="0">
+                </label>
+                <label for="" class="correo_label">
+                    <span class="correo">Correo</span>
+                    <input type="text" id="correo" name="correo" autocomplete="off" required  >
+                </label>
+                <div class='file-input' style="margin-bottom: 40px;">
+                    <input type='file' id="file" name="file">
+                </div>
+                <div>
+                    <input type="radio" id="woman"
+                    name="contact" value="Femenino">
+                    <label for="woman">Femenino</label>
+                
+                    <input type="radio" id="man"
+                    name="contact" value="Masculino">
+                    <label for="man">Masculino</label>
+                </div>
+            </div>
+            <hr class="hr">
+            <div class="col-auto">
+                <label for="producto" class="visually-hidden">Pago inicial</label>
+                <input type="number" class="form-control" id="pagoInicial" placeholder="Pago inicial">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Comprar y registrar</button>
+            </div>
+        </form>
+    </div>
+    HDOC;
+    return $compra;
+}
+
+function clientesCredito($clientes) {
+    $tabla = <<<HDOC
+    <button type="button" onclick='comprarCredito();' class="btn btn-primary">Regresar</button>
+    <div class="col-auto">
+        <label for="producto" class="visually-hidden">Pago inicial</label>
+        <input type="number" class="form-control" id="pagoInicial" placeholder="Pago inicial">
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th>Foto de Perfil</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Paterno</th>
+                <th scope="col">Materno</th>
+                <th scope="col">Comprar</th>
+            </tr>
+        </thead>
+        <tbody>
+    HDOC;
+    while ($ren = $clientes->fetch_array(MYSQLI_ASSOC)) {
+        $img = "";
+        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
+        else { $img = "../Images/noPhoto.png"; }
+        $acciones = <<<HDOC
+            <button type="button" onclick='comprarMisProductosCredito($ren[cliente])' class="btn btn-success">Comprar</button>
+        HDOC;
+        $tabla .= <<<HDOC
+            <tr id='$ren[cliente]'>
+                <th scope="row">$ren[cliente]</th>
+                <td><img src='$img' width='80px' alt=''/></td>
+                <td>$ren[nombre]</td>
+                <td>$ren[paterno]</td>
+                <td>$ren[materno]</td>
+                <td>$acciones</td>
+            </tr>
+        HDOC;
+    }
+    $tabla .= "<tbodt></tbodt><table></table>";
+    return $tabla;
 }
