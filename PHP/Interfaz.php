@@ -18,10 +18,20 @@ function menu($datosUsuario) {
                     <span class="navbar-toggler-icon"></span>
                 </button>
             
-                <a class="navbar-brand" style="cursor: pointer;">Productos</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Productos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" onclick='verProductos();' style='cursor: pointer;'>Lista de productos</a></li>
+                                <li><a class="dropdown-item" onclick='viewAddProduct();' style='cursor: pointer;'>Alta de productos</a></li>
+                                <li><a class="dropdown-item" onclick='verProductos();' style='cursor: pointer;'>Baja de Productos</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -596,3 +606,154 @@ function detallesCredito($creditos) {
     $tabla .= "<tbodt></tbodt><table></table>";
     return $tabla;
 }
+
+function viewProductos($datos){
+    $tabla = <<<HDOC
+    <div class='container'>
+    <table  class='table table-striped table-hover'>
+        <thead>
+            <tr>
+                <th>Numero</th>
+                <th>Imagen</th>
+                <th>Codigo</th>
+                <th>Nombre del producto</th>
+                <th>Cantidad</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+    HDOC;
+
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        if ($ren["img_ruta"] != Null) {
+            $img = "<img src='$ren[img_ruta]' width='100'>";
+        } else {
+            $img = "<img src='../Images/noimage.png' width='100'>";
+        }
+        $tabla .= <<<HDOC
+        <tr id='r$ren[id_pro]'>
+        <td>$ren[id_pro]</td>
+        <td>$img</td>
+        <td>$ren[codigo_pro]</td>
+        <td>$ren[nombre_pro]</td>
+        <td>$ren[cantidad]</td>
+        <td>
+        <button type="button" class="btn btn-success " onclick='javascript:detallesProductos($ren[id_pro])'>Informacion</button>
+        <button type="button" class="btn btn-warning" onclick='javascript:modificarProductos($ren[id_pro])'>Modificar</button>
+        <button type="button" class="btn btn-danger" onclick='javascript:viewDeleteProducto($ren[id_pro])'>Eliminar</button>
+        </td>
+           </tr> 
+        HDOC;
+    }
+    $tabla .= "</tbody></table></div>";
+    return $tabla;
+}
+
+function viewAddProductos(){
+    $tabla = <<<HDOC
+    <br>
+    <br>
+    <div class="container bg-dark text-light rounded">
+    <form class="row g-4" action="javascript:AddProduct()" method="POST">
+    <div class="col-md-6">
+      <label for="codigo_pro" class="form-label">Codigo del Producto</label>
+      <input type="text" class="form-control" id="codigo_pro" name="codigo_pro" required>
+    </div>
+    <div class="col-md-6">
+      <label for="nombre_pro" class="form-label">Nombre del Producto</label>
+      <input type="text" class="form-control" id="nombre_pro" required>
+    </div>
+    <div class="col-2">
+      <label for="stock_max" class="form-label">Stock Maximo</label>
+      <input type="number" class="form-control" id="stock_max" required>
+    </div>
+    <div class="col-2">
+      <label for="stock_min" class="form-label">Stock minimo</label>
+      <input type="number" class="form-control" id="stock_min" required>
+    </div>
+    <div class="col-md-2">
+      <label for="cantidad" class="form-label">Stock Actual</label>
+      <input type="text" class="form-control" id="cantidad" required>
+    </div>
+    <div class="col-md-2">
+    <label for="precio_pro" class="form-label">Precio</label>
+    <input type="text" class="form-control" id="precio_pro" required>
+    </div>
+    <div class="col-md-4">
+      <label for="imagen" class="form-label">Imagen</label>
+      <input type="file" class="form-control" id="imagen" required>
+    </div>
+    
+ 
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Agregar Producto</button>
+    </div>
+    </form>
+    <br>
+    </div>
+    HDOC;
+    return $tabla;
+}
+
+function viewProducto($datos){
+    $tabla = "";
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        if ($ren["img_ruta"] != Null) {
+            $img = $ren["img_ruta"];
+        } else {
+            $img = "../Images/noimage.png";
+        }
+        $tabla .= <<<HDOC
+        <div class="d-flex justify-content-center">
+        <div class="card" style="width: 18rem;">
+        <img src="$img" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Producto: $ren[nombre_pro]</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Codigo: $ren[codigo_pro]</li>
+          <li class="list-group-item">Stock Maximo: $ren[stock_max]</li>
+          <li class="list-group-item">Stock Minimo: $ren[stock_min]</li>
+          <li class="list-group-item">Status: $ren[status_pro]</li>
+          <li class="list-group-item">Stock Actual: $ren[cantidad]</li>
+          <li class="list-group-item"><h1> Precio:  $$ren[precio_pro]</h1></li>
+        </ul>
+        </div>
+        </div>
+        HDOC;
+    }
+    return $tabla;
+}
+
+function viewDeleteProducto($datos){
+    $tabla = "";
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        if ($ren["img_ruta"] != Null) {
+            $img = $ren["img_ruta"];
+        } else {
+            $img = "../Images/noimage.png";
+        }
+        $tabla .= <<<HDOC
+        <div class="d-flex justify-content-center">
+        <div class="card" style="width: 18rem;">
+        <img src="$img" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Producto: $ren[nombre_pro]</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Codigo: $ren[codigo_pro]</li>
+          <li class="list-group-item">Stock Maximo: $ren[stock_max]</li>
+          <li class="list-group-item">Stock Minimo: $ren[stock_min]</li>
+          <li class="list-group-item">Status: $ren[status_pro]</li>
+          <li class="list-group-item">Stock Actual: $ren[cantidad]</li>
+          <li class="list-group-item"><h1> Precio:  $$ren[precio_pro]</h1></li>
+        </ul>
+        <button type="button" class="btn btn-danger" onclick='javascript:DeleteProducto($ren[id_pro])'>Eliminar</button>
+        </div>
+        </div>
+        
+        HDOC;
+    }
+    return $tabla;
+}
+

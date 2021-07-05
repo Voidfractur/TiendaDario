@@ -3,9 +3,10 @@ var tablaProductos = "";
 var productos = [];
 var contenidoProductos = "";
 var tuplas = {
-    'datos' :[]
-  };
+    'datos': []
+};
 var total = 0;
+
 function login() {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
@@ -14,7 +15,7 @@ function login() {
         document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -33,7 +34,7 @@ function inicioSesion() {
         document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -45,7 +46,7 @@ function verUsuarios() {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -63,7 +64,7 @@ function verUsuariosMensaje(mensaje) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -74,7 +75,7 @@ function mostrarDetalles(id) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -85,7 +86,7 @@ function vistaModificar(id) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -97,21 +98,21 @@ function modificar(id) {
     let form = document.querySelector("#form");
     let combo = document.getElementById("sexo");
     let sexo = combo.options[combo.selectedIndex].text;
-    datos.append(`nombre`,form.nombre.value);
+    datos.append(`nombre`, form.nombre.value);
     datos.append(`paterno`, form.paterno.value);
     datos.append(`materno`, form.materno.value);
     datos.append(`sexo`, `${sexo}`);
     datos.append(`telefono`, form.telefono.value);
     datos.append(`correo`, form.correo.value);
     datos.append(`puesto`, form.puesto.value);
-    if(form.file.files.length > 0) {
+    if (form.file.files.length > 0) {
         datos.append(`fotoPerfil`, form.file.files[0]);
     }
     sol.addEventListener('load', function(e) {
         // document.getElementsByClassName(`main`)[0].innerHTML = menu;
         verUsuariosMensaje(`Empleado ${form.nombre.value} actualizado`);
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -123,7 +124,7 @@ function nuevoEmpleado() {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -132,20 +133,19 @@ function nuevoUsuario() {
     var sol = new XMLHttpRequest;
     let sex = null;
     let form = document.querySelector("#form");
-    if(document.getElementById(`woman`).checked) {
+    if (document.getElementById(`woman`).checked) {
         sex = document.getElementById(`woman`).value;
-    }
-    else if(document.getElementById(`man`).checked) {
+    } else if (document.getElementById(`man`).checked) {
         sex = document.getElementById(`man`).value;
     }
     datos.append(`nuevoUsuario`, `newUser`);
-    datos.append(`nombre`,form.nombre.value);
+    datos.append(`nombre`, form.nombre.value);
     datos.append(`paterno`, form.paterno.value);
     datos.append(`materno`, form.materno.value);
     datos.append(`sexo`, `${sex}`);
     datos.append(`telefono`, form.telefono.value);
     datos.append(`correo`, form.correo.value);
-    if(form.file.files.length > 0) {
+    if (form.file.files.length > 0) {
         datos.append(`fotoPerfil`, form.file.files[0]);
     }
     datos.append(`username`, form.username.value);
@@ -155,7 +155,7 @@ function nuevoUsuario() {
         console.log(e.target.responseText);
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
     verUsuariosMensaje(`Usuario nuevo creado: ${form.nombre.value}`);
 }
@@ -168,7 +168,7 @@ function eliminarEmpleado(id) {
         verUsuariosMensaje(`El empleado con id: ${id} ha sido eliminado`);
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -180,14 +180,14 @@ function venderSinMensaje() {
     contenidoProductos = "";
     tablaProductos = "";
     tuplas = {
-        'datos' :[]
-      };
+        'datos': []
+    };
     sol.addEventListener('load', function(e) {
         tablaProductos = e.target.responseText;
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -205,14 +205,14 @@ function venderMensaje(mensaje) {
     contenidoProductos = "";
     tablaProductos = "";
     tuplas = {
-        'datos' :[]
-      };
+        'datos': []
+    };
     sol.addEventListener('load', function(e) {
         tablaProductos = e.target.responseText;
         document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -223,24 +223,23 @@ function buscarProducto() {
     datos.append(`agregar`, `agregar`);
     datos.append(`codigoBarras`, `${form.producto.value}`);
     sol.addEventListener('load', function(e) {
-        if(e.target.responseText) {
+        if (e.target.responseText) {
             agregarProducto(form.producto.value);
-        }
-        else {
+        } else {
             document.getElementsByClassName(`main`)[0].innerHTML = menu + "<div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> Producto no encontrado o sin existencia.<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>" + tablaProductos + contenidoProductos;
         }
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
 function agregarProducto(codigoBarras) {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
-    if(productos.length != 0) {
-        for(let i = 0; i < productos.length; i++) {
-            if(productos[i] == codigoBarras) {
+    if (productos.length != 0) {
+        for (let i = 0; i < productos.length; i++) {
+            if (productos[i] == codigoBarras) {
                 agregarOtroProducto(codigoBarras);
                 return;
             }
@@ -257,7 +256,7 @@ function agregarProducto(codigoBarras) {
         contenidoProductos += e.target.responseText;
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -270,7 +269,7 @@ function agregarOtroProducto(producto) {
 
 function eliminarUnaPieza(producto) {
     let eliminar = document.getElementsByClassName(`${producto}`);
-    if(eliminar[1].textContent == 1) {
+    if (eliminar[1].textContent == 1) {
         document.getElementsByTagName(`tbody`)[0].removeChild(document.getElementById(`${producto}`));
         contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
         removeItemFromArr(productos, `${producto}`);
@@ -287,18 +286,17 @@ function removeItemFromArr(arr, item) {
 }
 
 function comprarContado() {
-    if(document.getElementsByTagName(`tr`).length == 1) {
+    if (document.getElementsByTagName(`tr`).length == 1) {
         alert("No hay productos");
-    }
-    else {
-        if(tuplas.datos.length == 0) {
+    } else {
+        if (tuplas.datos.length == 0) {
             let tr = document.getElementsByTagName(`tr`);
             for (let i = 1; i < tr.length; i++) {
                 let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
-                tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
+                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[2].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[3].textContent, "codigobarras": tr[i].id });
             };
-        }   
-    //    json= JSON.stringify(obj);
+        }
+        //    json= JSON.stringify(obj);
         var datos = new FormData();
         var sol = new XMLHttpRequest;
         datos.append(`comprarContado`, `contado`);
@@ -306,25 +304,24 @@ function comprarContado() {
             document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
             agregarProductos();
         }, false);
-    
-        sol.open('POST', '../PHP/Controlador.php',true);
+
+        sol.open('POST', '../PHP/Controlador.php', true);
         sol.send(datos);
     }
 }
 
 function comprarCredito() {
-    if(document.getElementsByTagName(`tr`).length == 1) {
+    if (document.getElementsByTagName(`tr`).length == 1) {
         alert("No hay productos");
-    }
-    else {
-        if(tuplas.datos.length == 0) {
+    } else {
+        if (tuplas.datos.length == 0) {
             let tr = document.getElementsByTagName(`tr`);
             for (let i = 1; i < tr.length; i++) {
                 let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
-                tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
+                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[2].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[3].textContent, "codigobarras": tr[i].id });
             };
-        }   
-    //    json= JSON.stringify(obj);
+        }
+        //    json= JSON.stringify(obj);
         var datos = new FormData();
         var sol = new XMLHttpRequest;
         datos.append(`comprarCredito`, `credito`);
@@ -332,8 +329,8 @@ function comprarCredito() {
             document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
             agregarProductos();
         }, false);
-    
-        sol.open('POST', '../PHP/Controlador.php',true);
+
+        sol.open('POST', '../PHP/Controlador.php', true);
         sol.send(datos);
     }
 }
@@ -341,7 +338,7 @@ function comprarCredito() {
 function agregarProductos() {
     let lista = document.getElementById(`productosAComprar`);
     let totalAPagar = 0;
-    for(let i = 0; i < tuplas.datos.length; i++) {
+    for (let i = 0; i < tuplas.datos.length; i++) {
         console.log("Entra al for");
         let articulos = `
             <li class="list-group-item d-flex justify-content-between align-items-start">
@@ -372,11 +369,10 @@ function clienteRegistrado() {
     var sol = new XMLHttpRequest;
     datos.append(`clientesRegistrados`, `clientes`);
     sol.addEventListener('load', function(e) {
-        if(e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; }
-        else { alert("No hay clientes registrados todavía"); }
+        if (e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; } else { alert("No hay clientes registrados todavía"); }
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -387,13 +383,13 @@ function pagarSinRegistro() {
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
     sol.addEventListener('load', function(e) {
-        for(let i = 0; i < tuplas.datos.length; i++) {
+        for (let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
         venderMensaje("La venta se ha realizado exitosamente");
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -407,8 +403,8 @@ function renglonTicket(cantidad, precio, codigoBarras) {
     sol.addEventListener('load', function(e) {
         console.log(e.target.responseText)
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -417,10 +413,9 @@ function pagarNuevoCliente() {
     var sol = new XMLHttpRequest;
     let sex = null;
     let form = document.querySelector("#formNuevoUsuario");
-    if(document.getElementById(`woman`).checked) {
+    if (document.getElementById(`woman`).checked) {
         sex = document.getElementById(`woman`).value;
-    }
-    else if(document.getElementById(`man`).checked) {
+    } else if (document.getElementById(`man`).checked) {
         sex = document.getElementById(`man`).value;
     }
     datos.append(`pagarRegistro`, `newUser`);
@@ -433,17 +428,17 @@ function pagarNuevoCliente() {
     let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
-    if(form.file.files.length > 0) {
+    if (form.file.files.length > 0) {
         datos.append(`fotoPerfil`, form.file.files[0]);
     }
     sol.addEventListener('load', function(e) {
-        for(let i = 0; i < tuplas.datos.length; i++) {
+        for (let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
         venderMensaje("La venta y el registro del cliente fue exitosa");
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -454,13 +449,13 @@ function comprarMisProductos(id_cli) {
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
     sol.addEventListener('load', function(e) {
-        for(let i = 0; i < tuplas.datos.length; i++) {
+        for (let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
         venderMensaje("La venta se ha realizado exitosamente");
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -470,11 +465,10 @@ function pagarNuevoClienteCredito() {
     let sex = null;
     let form = document.querySelector("#formNuevoUsuario");
     let pagoInicial = "";
-    if(form.pagoInicial.value != "") { pagoInicial = form.pagoInicial.value; }
-    if(document.getElementById(`woman`).checked) {
+    if (form.pagoInicial.value != "") { pagoInicial = form.pagoInicial.value; }
+    if (document.getElementById(`woman`).checked) {
         sex = document.getElementById(`woman`).value;
-    }
-    else if(document.getElementById(`man`).checked) {
+    } else if (document.getElementById(`man`).checked) {
         sex = document.getElementById(`man`).value;
     }
     datos.append(`pagarRegistro`, `newUser`);
@@ -487,18 +481,18 @@ function pagarNuevoClienteCredito() {
     let total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
-    if(form.file.files.length > 0) {
+    if (form.file.files.length > 0) {
         datos.append(`fotoPerfil`, form.file.files[0]);
     }
     sol.addEventListener('load', function(e) {
-        for(let i = 0; i < tuplas.datos.length; i++) {
+        for (let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
         agregarCredito(pagoInicial);
         venderMensaje("La venta y el registro del cliente fue exitosa");
     }, false);
 
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -511,8 +505,8 @@ function agregarCredito(pagoInicial) {
     sol.addEventListener('load', function(e) {
         console.log(e.target.responseText);
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -522,11 +516,10 @@ function clienteRegistradoCredito() {
     var sol = new XMLHttpRequest;
     datos.append(`clientesRegistradosCredito`, `clientes`);
     sol.addEventListener('load', function(e) {
-        if(e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; }
-        else { alert("No hay clientes registrados todavía"); }
+        if (e.target.responseText != 0) { document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText; } else { alert("No hay clientes registrados todavía"); }
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -538,14 +531,14 @@ function comprarMisProductosCredito(id_cliente) {
     datos.append(`total`, total);
     datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
     sol.addEventListener('load', function(e) {
-        for(let i = 0; i < tuplas.datos.length; i++) {
+        for (let i = 0; i < tuplas.datos.length; i++) {
             renglonTicket(tuplas.datos[i].cantidadcomprada, tuplas.datos[i].costounidad, tuplas.datos[i].codigobarras);
         }
         agregarCredito(pagoInicial);
         venderMensaje("La venta se a crédito se ha realizado exitosamente");
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -556,8 +549,8 @@ function verCredito() {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -568,7 +561,151 @@ function verDetallesCredito(id_cre) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
+}
+
+function verProductos() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`listarProductos`, `all`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function viewAddProduct() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`viewAddProduct`, `new`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function AddProduct() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+
+    let codigo_pro = document.getElementById("codigo_pro");
+    let nombre_pro = document.getElementById("nombre_pro");
+    let stock_max = document.getElementById("stock_max");
+    let stock_min = document.getElementById("stock_min");
+    let cantidad = document.getElementById("cantidad");
+    let precio_pro = document.getElementById("precio_pro");
+    let imagen = document.getElementById("imagen");
+
+    datos.append(`AddProduct`, `new`);
+    datos.append(`codigo_pro`, codigo_pro.value);
+    datos.append(`nombre_pro`, nombre_pro.value);
+    datos.append(`stock_max`, stock_max.value);
+    datos.append(`stock_min`, stock_min.value);
+    datos.append(`cantidad`, cantidad.value);
+    datos.append(`precio_pro`, precio_pro.value);
+    datos.append("imagen", imagen.files[0]);
+
+    if ((/\.(jpg|png|gif|jpeg)$/i).test(imagen.files[0].name)) {
+        sol.addEventListener('load', function(e) {
+            if (e.target.responseText == "200") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Producto agregado correctamente',
+                    showConfirmButton: false,
+                    timer: 3000
+                })
+                verProductos();
+            } else {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Error Hubo un problema al guardar',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+
+        }, false);
+
+        sol.open('POST', '../PHP/Controlador.php', true);
+        sol.send(datos);
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Archivo no aceptado!'
+        })
+    }
+
+}
+
+function detallesProductos(id_pro) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`informacionProducto`, `new`);
+    datos.append(`id_pro`, id_pro);
+
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function viewDeleteProducto(id_pro) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`viewDeleteProducto`, `new`);
+    datos.append(`id_pro`, id_pro);
+
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+
+function DeleteProducto(id_pro) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+
+    datos.append(`deleteProducto`, `del`);
+    datos.append("id_pro", id_pro);
+
+    sol.addEventListener('load', function(e) {
+        if (e.target.responseText == "200") {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Producto Eliminado correctamente',
+                showConfirmButton: false,
+                timer: 3000
+            })
+            verProductos();
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error Hubo un problema al Eliminar',
+                showConfirmButton: false,
+                timer: 3000
+            })
+        }
+
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+
+
 }

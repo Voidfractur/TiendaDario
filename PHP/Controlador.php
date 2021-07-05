@@ -1,6 +1,7 @@
 <?php
 require_once 'Conexion.lib.php';
 require_once 'Interfaz.php';
+require_once 'Producto.php';
 if(isset($_SESSION['autenticacion']) && $_SESSION['autenticacion'] == 1) {
     echo $sistema;
     return;
@@ -250,15 +251,55 @@ if(isset($_POST['vercredito'])) {
     else { echo "Sin datos"; }
 }
 
-if(isset($_POST['detallescredito'])) {
-    $creditos = $cnn->query("SELECT cre.id_cre as credito, rt.cve_tic as ticket, cantidad_ren as cantidad,
-    nombre_pro as producto, total_tic - pagoinicial as restante, cantidad_ren * preciov_ren as TotalProducto, preciov_ren as preciounidad
-    FROM credito cre join ticket t
-    on cre.cve_tic = t.id_tic join renglonticket rt
-    on rt.cve_tic = t.id_tic join producto p
-    on rt.cve_pro = p.id_pro WHERE cre.id_cre = ". $_POST['detallescredito'] . "");
-    if($creditos->num_rows > 0) {
-        echo detallesCredito($creditos);
+if(isset($_POST['listarProductos'])) {
+    $producto = new Producto();
+    $datos =$producto->getProductos();
+    if($datos->num_rows > 0) {
+        echo viewProductos($datos);
     }
     else { echo "Sin datos"; }
+}
+
+if(isset($_POST['viewAddProduct'])) {
+        echo viewAddProductos();
+}
+
+if(isset($_POST['AddProduct'])) {
+    $imagen = $_FILES["imagen"];
+    $ruta = "../resources/".uniqid().".".pathinfo($imagen["name"], PATHINFO_EXTENSION);
+    $resultado = move_uploaded_file($imagen["tmp_name"],$ruta);
+    $producto = new Producto();
+    $datos = $producto->addProducto($_POST["codigo_pro"],$_POST["nombre_pro"],$_POST["stock_max"],$_POST["stock_min"],$_POST["cantidad"],$ruta,$_POST["precio_pro"]);
+    if($resultado && $datos){
+echo "200";
+    }else{
+echo "409";
+    }
+    
+}
+if (isset($_POST["informacionProducto"])) {
+    $producto = new Producto();
+    $datos =$producto->getProducto($_POST["id_pro"]);
+    if($datos->num_rows > 0) {
+        echo viewProducto($datos);
+    }
+    else { echo "Sin datos"; }
+}
+if (isset($_POST["viewDeleteProducto"])) {
+    $producto = new Producto();
+    $datos =$producto->getProducto($_POST["id_pro"]);
+    if($datos->num_rows > 0) {
+        echo viewDeleteProducto($datos);
+    }
+    else { echo "Sin datos"; }
+}
+
+if(isset($_POST['deleteProducto'])) {
+    $producto = new Producto();
+    $datos = $producto->delProducto($_POST["id_pro"]);
+    if($datos){
+echo "200";
+    }else{
+echo "409";
+    }
 }
