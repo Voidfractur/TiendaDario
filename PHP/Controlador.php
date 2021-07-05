@@ -297,7 +297,17 @@ if(isset($_POST['vercredito'])) {
     }
     else { echo "Sin datos"; }
 }
-
+if(isset($_POST['detallescredito'])) {
+    $creditos = $cnn->query("SELECT cre.id_cre as credito, rt.cve_tic as ticket, cantidad_ren as cantidad,
+    nombre_pro as producto, total_tic - pagoinicial as restante, cantidad_ren * preciov_ren as TotalProducto, preciov_ren as preciounidad
+    FROM credito cre join ticket t
+    on cre.cve_tic = t.id_tic join renglonticket rt
+    on rt.cve_tic = t.id_tic join producto p
+    on rt.cve_pro = p.id_pro WHERE cre.id_cre = ". $_POST['detallescredito'] . "");
+    if($creditos->num_rows > 0) {
+        echo detallesCredito($creditos);
+    } else { echo "Sin datos"; }
+}
 if(isset($_POST['listarProductos'])) {
     $producto = new Producto();
     $datos =$producto->getProductos();
@@ -312,12 +322,25 @@ if(isset($_POST['viewAddProduct'])) {
 }
 
 if(isset($_POST['AddProduct'])) {
-    $imagen = $_FILES["imagen"];
-    $ruta = "../resources/".uniqid().".".pathinfo($imagen["name"], PATHINFO_EXTENSION);
-    $resultado = move_uploaded_file($imagen["tmp_name"],$ruta);
+    $tipo="";
+    $contenido="";
+    if (isset($_FILES["imagen"]["tmp_name"]) && $_FILES["imagen"]["tmp_name"] != "") {
+        $archivo = $_FILES["imagen"]["tmp_name"];
+        $tipo = $_FILES["imagen"]["type"];
+        $tam = $_FILES['imagen']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+    }
+
+    //$imagen = $_FILES["imagen"];
+    //$ruta = "../resources/".uniqid().".".pathinfo($imagen["name"], PATHINFO_EXTENSION);
+    //$resultado = move_uploaded_file($imagen["tmp_name"],$ruta);
     $producto = new Producto();
-    $datos = $producto->addProducto($_POST["codigo_pro"],$_POST["nombre_pro"],$_POST["stock_max"],$_POST["stock_min"],$_POST["cantidad"],$ruta,$_POST["precio_pro"]);
-    if($resultado && $datos){
+    $datos = $producto->addProducto($_POST["codigo_pro"],$_POST["nombre_pro"],$_POST["stock_max"],$_POST["stock_min"],$_POST["cantidad"],$contenido,$tipo,$_POST["precio_pro"]);
+    if($datos){
 echo "200";
     }else{
 echo "409";
@@ -349,4 +372,49 @@ echo "200";
     }else{
 echo "409";
     }
+}
+
+if(isset($_POST['bajaProducto'])) {
+    $producto = new Producto();
+    $datos = $producto->bajaProducto($_POST["id_pro"]);
+    if($datos){
+echo "200";
+    }else{
+echo "409";
+    }
+}
+
+if (isset($_POST["vistaModificarProducto"])) {
+    $producto = new Producto();
+    $datos =$producto->getProducto($_POST["id_pro"]);
+    if($datos->num_rows > 0) {
+        echo viewModificarProducto($datos);
+    }
+    else { echo "Sin datos"; }
+}
+
+if(isset($_POST['UpdateProducto'])) {
+    $tipo="";
+    $contenido="";
+    if (isset($_FILES["imagen"]["tmp_name"]) && $_FILES["imagen"]["tmp_name"] != "") {
+        $archivo = $_FILES["imagen"]["tmp_name"];
+        $tipo = $_FILES["imagen"]["type"];
+        $tam = $_FILES['imagen']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+        $producto = new Producto();
+        $datos = $producto->updateProductoWithImage($_POST["id_pro"], $_POST["codigo_pro"], $_POST["nombre_pro"], $_POST["stock_max"], $_POST["stock_min"], $_POST["cantidad"], $contenido, $tipo, $_POST["precio_pro"]);
+    }else{
+        $producto = new Producto();
+        $datos = $producto->updateProductoWithoutImage($_POST["id_pro"], $_POST["codigo_pro"], $_POST["nombre_pro"], $_POST["stock_max"], $_POST["stock_min"], $_POST["cantidad"], $_POST["precio_pro"]);
+    }
+    if($datos){
+echo "200";
+    }else{
+echo "409";
+    }
+    
 }

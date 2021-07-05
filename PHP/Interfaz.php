@@ -814,6 +814,7 @@ function viewProductos($datos){
                 <th>Imagen</th>
                 <th>Codigo</th>
                 <th>Nombre del producto</th>
+                <th>Precio</th>
                 <th>Cantidad</th>
                 <th>Opciones</th>
             </tr>
@@ -822,22 +823,27 @@ function viewProductos($datos){
     HDOC;
 
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
-        if ($ren["img_ruta"] != Null) {
+        /*if ($ren["img_ruta"] != Null) {
             $img = "<img src='$ren[img_ruta]' width='100'>";
         } else {
             $img = "<img src='../Images/noimage.png' width='100'>";
-        }
+        }*/
+        $img = "";
+        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
+        
+        else { $img = "../Images/noimage.png"; }
         $tabla .= <<<HDOC
         <tr id='r$ren[id_pro]'>
         <td>$ren[id_pro]</td>
-        <td>$img</td>
+        <td><img src="$img" width='100'></td>
         <td>$ren[codigo_pro]</td>
         <td>$ren[nombre_pro]</td>
+        <td>$$ren[precio_pro].00</td>
         <td>$ren[cantidad]</td>
         <td>
         <button type="button" class="btn btn-success " onclick='javascript:detallesProductos($ren[id_pro])'>Informacion</button>
-        <button type="button" class="btn btn-warning" onclick='javascript:modificarProductos($ren[id_pro])'>Modificar</button>
-        <button type="button" class="btn btn-danger" onclick='javascript:viewDeleteProducto($ren[id_pro])'>Eliminar</button>
+        <button type="button" class="btn btn-warning" onclick='javascript:viewModificarProducto($ren[id_pro])'>Modificar</button>
+        <button type="button" class="btn btn-danger" onclick='javascript:viewDeleteProducto($ren[id_pro])'>Dar de baja</button>
         </td>
            </tr> 
         HDOC;
@@ -895,11 +901,14 @@ function viewAddProductos(){
 function viewProducto($datos){
     $tabla = "";
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
-        if ($ren["img_ruta"] != Null) {
+        /*if ($ren["img_ruta"] != Null) {
             $img = $ren["img_ruta"];
         } else {
             $img = "../Images/noimage.png";
-        }
+        }*/
+        $img = "";
+        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
+        else { $img = "../Images/noimage.png"; }
         $tabla .= <<<HDOC
         <div class="d-flex justify-content-center">
         <div class="card" style="width: 18rem;">
@@ -925,11 +934,14 @@ function viewProducto($datos){
 function viewDeleteProducto($datos){
     $tabla = "";
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
-        if ($ren["img_ruta"] != Null) {
+        /*if ($ren["img_ruta"] != Null) {
             $img = $ren["img_ruta"];
         } else {
             $img = "../Images/noimage.png";
-        }
+        }*/
+        $img = "";
+        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
+        else { $img = "../Images/noimage.png"; }
         $tabla .= <<<HDOC
         <div class="d-flex justify-content-center">
         <div class="card" style="width: 18rem;">
@@ -945,11 +957,70 @@ function viewDeleteProducto($datos){
           <li class="list-group-item">Stock Actual: $ren[cantidad]</li>
           <li class="list-group-item"><h1> Precio:  $$ren[precio_pro]</h1></li>
         </ul>
-        <button type="button" class="btn btn-danger" onclick='javascript:DeleteProducto($ren[id_pro])'>Eliminar</button>
+        <button type="button" class="btn btn-danger" onclick='javascript:bajaProducto($ren[id_pro])'>Dar de baja</button>
+        <button type="button" class="btn btn-dark" onclick='javascript:DeleteProducto($ren[id_pro])'>Eliminar</button>
         </div>
         </div>
         
         HDOC;
+    }
+    return $tabla;
+}
+
+function viewModificarProducto($datos){
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        $img = "";
+        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
+        else { $img = "../Images/noimage.png"; }
+    $tabla = <<<HDOC
+    <br>
+    <br>
+    <div class="container bg-dark text-light rounded">
+    <form class="row g-4" action="javascript:ModificarProducto($ren[id_pro])" method="POST">
+    <div class="col-md-2">
+      <label for="id_pro" class="form-label">Id</label>
+      <input type="text" class="form-control" id="id_pro" name="id_pro" value="$ren[id_pro]" readonly required>
+    </div>
+    <div class="col-md-4">
+      <label for="codigo_pro" class="form-label">Codigo del Producto</label>
+      <input type="text" class="form-control" id="codigo_pro" name="codigo_pro" value="$ren[codigo_pro]" required>
+    </div>
+    <div class="col-md-6">
+      <label for="nombre_pro" class="form-label">Nombre del Producto</label>
+      <input type="text" class="form-control" id="nombre_pro" value="$ren[nombre_pro]" required>
+    </div>
+    <div class="col-2">
+      <label for="stock_max" class="form-label">Stock Maximo</label>
+      <input type="number" class="form-control" id="stock_max" value="$ren[stock_max]" required>
+    </div>
+    <div class="col-2">
+      <label for="stock_min" class="form-label">Stock minimo</label>
+      <input type="number" class="form-control" id="stock_min" value="$ren[stock_min]" required>
+    </div>
+    <div class="col-md-2">
+      <label for="cantidad" class="form-label">Stock Actual</label>
+      <input type="text" class="form-control" id="cantidad" value="$ren[cantidad]" required>
+    </div>
+    <div class="col-md-2">
+    <label for="precio_pro" class="form-label">Precio</label>
+    <input type="text" class="form-control" id="precio_pro" value="$ren[precio_pro]" required>
+    </div>
+    <div class="col-md-4">
+      <img src="$img" width='100' alt="...">
+    </div>
+    <div class="col-md-4">
+      <label for="imagen" class="form-label">Imagen</label>
+      <input type="file" class="form-control" id="imagen">
+    </div>
+    
+ 
+    <div class="col-12">
+      <button type="submit" class="btn btn-primary">Modificar Producto</button>
+    </div>
+    </form>
+    <br>
+    </div>
+    HDOC;
     }
     return $tabla;
 }
