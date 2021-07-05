@@ -609,40 +609,43 @@ function AddProduct() {
     datos.append(`stock_min`, stock_min.value);
     datos.append(`cantidad`, cantidad.value);
     datos.append(`precio_pro`, precio_pro.value);
-    datos.append("imagen", imagen.files[0]);
+    //datos.append("imagen", imagen.files[0]);
+    if (imagen.files.length > 0) {
+        datos.append(`imagen`, imagen.files[0]);
+    }
+    //if ((/\.(jpg|png|gif|jpeg)$/i).test(imagen.files[0].name)) {
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+        if (e.target.responseText == "200") {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Producto agregado correctamente',
+                showConfirmButton: false,
+                timer: 3000
+            })
+            verProductos();
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error Hubo un problema al guardar',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
 
-    if ((/\.(jpg|png|gif|jpeg)$/i).test(imagen.files[0].name)) {
-        sol.addEventListener('load', function(e) {
-            if (e.target.responseText == "200") {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Producto agregado correctamente',
-                    showConfirmButton: false,
-                    timer: 3000
-                })
-                verProductos();
-            } else {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Error Hubo un problema al guardar',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            }
+    }, false);
 
-        }, false);
-
-        sol.open('POST', '../PHP/Controlador.php', true);
-        sol.send(datos);
-    } else {
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+    /*} else {
         Swal.fire({
             icon: 'error',
             title: 'Error!',
             text: 'Archivo no aceptado!'
         })
-    }
+    }*/
 
 }
 
@@ -703,6 +706,52 @@ function DeleteProducto(id_pro) {
         }
 
     }, false);
+    Swal.fire({
+        title: '¿Estas seguro de eliminar este producto?',
+        text: "Esta accion no se puede deshacer!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, borrar!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            sol.open('POST', '../PHP/Controlador.php', true);
+            sol.send(datos);
+        }
+    })
+
+}
+
+function bajaProducto(id_pro) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+
+    datos.append(`bajaProducto`, `del`);
+    datos.append("id_pro", id_pro);
+    console.log("clickbaja");
+    sol.addEventListener('load', function(e) {
+        if (e.target.responseText == "200") {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Producto dado de baja correctamente',
+                showConfirmButton: false,
+                timer: 3000
+            })
+            verProductos();
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error Hubo un problema al dar de baja',
+                showConfirmButton: false,
+                timer: 3000
+            })
+        }
+
+    }, false);
 
     sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
@@ -715,8 +764,8 @@ function verClientes() {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -733,7 +782,7 @@ function verClientesMensaje(mensaje) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -744,8 +793,8 @@ function detallesCliente(id_cliente) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -756,8 +805,8 @@ function vistaModificarCliente(id_cliente) {
     sol.addEventListener('load', function(e) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
-    
-    sol.open('POST', '../PHP/Controlador.php',true);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -768,20 +817,20 @@ function modificarCliente(id) {
     let form = document.querySelector("#form");
     let combo = document.getElementById("sexo");
     let sexo = combo.options[combo.selectedIndex].text;
-    datos.append(`nombre`,form.nombre.value);
+    datos.append(`nombre`, form.nombre.value);
     datos.append(`paterno`, form.paterno.value);
     datos.append(`materno`, form.materno.value);
     datos.append(`sexo`, `${sexo}`);
     datos.append(`telefono`, form.telefono.value);
     datos.append(`correo`, form.correo.value);
-    if(form.file.files.length > 0) {
+    if (form.file.files.length > 0) {
         datos.append(`fotoPerfil`, form.file.files[0]);
     }
     sol.addEventListener('load', function(e) {
         // document.getElementsByClassName(`main`)[0].innerHTML = menu;
         verClientesMensaje(`Cliente ${form.nombre.value} actualizado`);
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
 
@@ -792,6 +841,70 @@ function eliminarCliente(id_cli) {
     sol.addEventListener('load', function(e) {
         verClientesMensaje(`Cliente eliminado con éxito`);
     }, false);
-    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function viewModificarProducto(id) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`vistaModificarProducto`, id);
+    datos.append(`id_pro`, id);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function ModificarProducto() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let id_pro = document.getElementById("id_pro");
+    let codigo_pro = document.getElementById("codigo_pro");
+    let nombre_pro = document.getElementById("nombre_pro");
+    let stock_max = document.getElementById("stock_max");
+    let stock_min = document.getElementById("stock_min");
+    let cantidad = document.getElementById("cantidad");
+    let precio_pro = document.getElementById("precio_pro");
+    let imagen = document.getElementById("imagen");
+
+    datos.append(`UpdateProducto`, `new`);
+    datos.append(`id_pro`, id_pro.value);
+    datos.append(`codigo_pro`, codigo_pro.value);
+    datos.append(`nombre_pro`, nombre_pro.value);
+    datos.append(`stock_max`, stock_max.value);
+    datos.append(`stock_min`, stock_min.value);
+    datos.append(`cantidad`, cantidad.value);
+    datos.append(`precio_pro`, precio_pro.value);
+    console.log(imagen.files.length);
+    if (imagen.files.length > 0) {
+        datos.append(`imagen`, imagen.files[0]);
+    }
+
+    sol.addEventListener('load', function(e) {
+        console.log(e.target.responseText);
+        if (e.target.responseText == "200") {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Producto Modificado correctamente',
+                showConfirmButton: false,
+                timer: 3000
+            })
+            verProductos();
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Error Hubo un problema al Modificar',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
