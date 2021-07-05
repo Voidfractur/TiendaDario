@@ -42,8 +42,7 @@ function menu($datosUsuario) {
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" onclick='venderSinMensaje();;' style='cursor: pointer;'>Vender un producto</a></li>
                                 <li><a class="dropdown-item" onclick='verCredito();' style='cursor: pointer;'>Ventas hechas a crédito</a></li>
-                                <!-- <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li> -->
+                                <li><a class="dropdown-item" onclick='verVentasHechas();' style='cursor: pointer;'>Ver todas las ventas</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -78,7 +77,6 @@ function verUsuarios($usuarios) {
         HDOC;
     while ($ren = $usuarios->fetch_array(MYSQLI_ASSOC)) {
         $img = "";
-        // if($ren['statusemp'] == "Despedido") { echo $ren['nombre']; continue; }
         if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
         else { $img = "../Images/noPhoto.png"; }
         $acciones = "";
@@ -104,6 +102,62 @@ function verUsuarios($usuarios) {
                 <td>$ren[materno]</td>
                 <td>$ren[fecha]</td>
                 <td>$ren[puesto]</td>
+                <td>$acciones</td>
+            </tr>
+        HDOC;
+    }
+    $tabla .= "<tbodt></tbodt><table></table>";
+    return $tabla;
+}
+
+function verClientes($usuarios) {
+    $tabla = <<<HDOC
+        <form class="d-flex" action='javascript:nuevoCliente();' style='margin-top: 20px; margin-bottom = 20px;'>
+            <input type="submit" value="Nuevo cliente" class='btn btn-success'>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th>Foto de Perfil</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Paterno</th>
+                    <th scope="col">Materno</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Correo electrónico</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+        HDOC;
+    while ($ren = $usuarios->fetch_array(MYSQLI_ASSOC)) {
+        $img = "";
+        $telefono = $ren['telefono'] != "" ? $ren['telefono'] : "Sin número registrado";
+        $correo = $ren['correo'] != "" ? $ren['correo'] : "Sin correo electrónico registrado";
+        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
+        else { $img = "../Images/noPhoto.png"; }
+        $acciones = "";
+        if($ren['nombre'] == "Público en general") {
+            $acciones = <<<HDOC
+                <button type="button" onclick='detallesCliente($ren[cliente]);' class="btn btn-secondary">Detalles</button>
+            HDOC;
+        }
+        else {
+            $acciones = <<<HDOC
+                <button type="button" onclick='detallesCliente($ren[cliente]);' class="btn btn-secondary">Detalles</button>
+                <button type="button" onclick='vistaModificarCliente($ren[cliente]);' class="btn btn-primary">Editar</button>
+                <button type="button" onclick='eliminarCliente($ren[cliente]);' class="btn btn-danger">Eliminar</button>
+            HDOC;
+        }
+        $tabla .= <<<HDOC
+            <tr id='$ren[cliente]'>
+                <th scope="row">$ren[cliente]</th>
+                <td><img src='$img' width='80px' alt=''/></td>
+                <td>$ren[nombre]</td>
+                <td>$ren[paterno]</td>
+                <td>$ren[materno]</td>
+                <td>$telefono</td>
+                <td>$correo</td>
                 <td>$acciones</td>
             </tr>
         HDOC;
@@ -177,6 +231,76 @@ function detalleUsuario($usuario) {
         </li>
     HDOC;
     $datosUsuario .= "</ol> <button type='button' onclick='verUsuarios();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button>";
+    return $datosUsuario;
+}
+
+function detalleCliente($usuario) {
+    $ren = $usuario->fetch_array(MYSQLI_ASSOC);
+    $datosUsuario = <<<HDOC
+        <ol class="list-group list-group-numbered">
+    HDOC;
+    $img = "";
+    if ($ren["foto"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
+    else { $img = "../Images/noPhoto.png"; }
+    $telefono = $ren['telefono'] != "" ? $ren['telefono'] : "Sin número registrado";
+    $correo = $ren['correo'] != "" ? $ren['correo'] : "Sin correo electrónico registrado";
+    $datosUsuario .= <<<HDOC
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Foto</div>
+                <img src='$img' width='80px' alt=''/>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Nombre</div>
+                    $ren[nombre]
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Apellidos</div>
+                    $ren[paterno] $ren[materno]
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Sexo</div>
+                    $ren[sexo]
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Correo</div>
+                    $correo
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Teléfono</div>
+                $telefono
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Fecha de registro del cliente</div>
+                    $ren[fecharegistro]
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Hora de registro del cliente</div>
+                    $ren[horaregistro]
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Tipo de cliente</div>
+                    $ren[tipocliente]
+            </div>
+        </li>
+    HDOC;
+    $datosUsuario .= "</ol> <button type='button' onclick='verClientes();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button>";
     return $datosUsuario;
 }
 
@@ -259,6 +383,79 @@ function vistaModificar($consult) {
         </li>
     HDOC;
     $datosUsuario .= "</ol> <button type='button' onclick='verUsuarios();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button> <input type='submit' name='update' id='update' value='Actualizar' class='btn btn-success'> </form>";
+    return $datosUsuario;
+}
+
+function vistaModificarCliente($consult) {
+    $ren = $consult->fetch_array(MYSQLI_ASSOC);
+    $datosUsuario = <<<HDOC
+        <form action='javascript:modificarCliente($ren[persona]);' id='form'>
+        <ol class="list-group list-group-numbered">
+    HDOC;
+    $datosUsuario .= <<<HDOC
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Foto</div>
+                <input type='file' name='file' id='file'>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Nombre</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="nombre" placeholder="Nombre" value='$ren[nombre]' required>
+                    <label for="nombre">Nombre</label>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Paterno</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="paterno" placeholder="Apellido Paterno" value='$ren[paterno]' required>
+                    <label for="paterno">Apellido Paterno</label>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Paterno</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="materno" placeholder="Apellido Materno" value='$ren[materno]' required>
+                    <label for="materno">Apellido Materno</label>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Sexo</div>
+                <select class="form-select" aria-label="Default select example" id='sexo' required>
+                    <option value=''>Seleccione un sexo</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                </select>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Correo</div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="correo" placeholder="Correo Electrónico" value='$ren[correo]' required>
+                    <label for="correo">Correo Electrónico</label>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+                <div class="fw-bold">Telefono</div>
+                <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="telefono" placeholder="Teléfono" value='$ren[telefono]' required>
+                    <label for="telefono">Teléfono</label>
+                </div>
+            </div>
+        </li>
+    HDOC;
+    $datosUsuario .= "</ol> <button type='button' onclick='verClientes();' class='btn btn-secondary' style='margin-top: 10px;'>Regresar</button> <input type='submit' name='update' id='update' value='Actualizar' class='btn btn-success'> </form>";
     return $datosUsuario;
 }
 

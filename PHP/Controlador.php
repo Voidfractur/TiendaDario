@@ -65,6 +65,12 @@ if(isset($_POST['verUsuarios'])) {
     else { echo "Sin datos"; }
 }
 
+if(isset($_POST['verClientes'])) {
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, c.id_cli as cliente, p.id_per as persona, foto_per as perfil, telefono_per as telefono, correo_per as correo FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.status_cli = 'Activo'");
+    if($consult->num_rows>0) { echo verClientes($consult); }
+    else { echo "Sin datos"; }
+}
+
 if(isset($_POST['detalleUsuario'])) {
     $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, foto_per as foto, usuario_emp as usuario, fechain_emp as fecha, puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['detalleUsuario']);
     if($consult->num_rows>0) {
@@ -72,10 +78,22 @@ if(isset($_POST['detalleUsuario'])) {
     }
 }
 
+if(isset($_POST['detalleCliente'])) {
+    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, foto_per as foto, Fechareg_cli as fecharegistro, Horareg_cli as horaregistro, tipo_cli as tipocliente FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.id_cli = ". $_POST['detalleCliente']);
+    if($consult->num_rows>0) {
+        echo detalleCliente($consult);
+    }
+}
+
 //MODIFICAR EL USUARIO: VISTA.
 if(isset($_POST['vistaModificar'])) {
     $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono, e.puesto_emp as puesto FROM empleado e join persona p on e.cve_per = p.id_per WHERE e.id_emp = ". $_POST['vistaModificar']);
     if($consult->num_rows>0) { echo vistaModificar($consult); }
+}
+
+if(isset($_POST['vistaModificarCliente'])) {
+    $consult = $cnn->query("SELECT p.id_per as persona, ap_per as paterno, am_per as materno, nombre_per as nombre, sexo_per as sexo, correo_per as correo, telefono_per as telefono FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.id_cli = ". $_POST['vistaModificarCliente']);
+    if($consult->num_rows>0) { echo vistaModificarCliente($consult); }
 }
 
 if(isset($_POST['modificar'])) {
@@ -105,12 +123,41 @@ if(isset($_POST['modificar'])) {
     $cnn->query("UPDATE empleado SET puesto_emp = '". $_POST['puesto']. "' WHERE cve_per = ". $_POST['modificar']);
 }
 
+if(isset($_POST['modificarCliente'])) {
+    require_once 'Persona.php';
+    $per = new Persona();
+    $per->setNombre($_POST['nombre']);
+    $per->setPaterno($_POST['paterno']);
+    $per->setMaterno($_POST['materno']);
+    $per->setSexo($_POST['sexo']);
+    $per->setTelefono($_POST['telefono']);
+    $per->setCorreo($_POST['correo']);
+    $tipo = "";
+    $cadArchi = "";
+    if (isset($_FILES["fotoPerfil"]["tmp_name"]) && $_FILES["fotoPerfil"]["tmp_name"] != "") {
+        $archivo = $_FILES["fotoPerfil"]["tmp_name"];
+        $tipo = $_FILES["fotoPerfil"]["type"];
+        $tam = $_FILES['fotoPerfil']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+        $cadArchi = "foto_per='$contenido', tipoarchivo_per='$tipo',";
+    }
+    $persona = $cnn->query("UPDATE persona SET $cadArchi ap_per = '". $per->getPaterno(). "', am_per = '".$per->getMaterno(). "', nombre_per = '".$per->getNombre(). "', sexo_per = '".$per->getSexo(). "', telefono_per = ".$per->getTelefono(). ", correo_per = '".$per->getCorreo(). "' WHERE id_per = ". $_POST['modificarCliente']);
+}
+
 if(isset($_POST['interfazUsuario'])) {
     echo interfazUsuario();
 }
 
 if(isset($_POST['eliminarEmpleado'])) {
     $cnn->query("UPDATE empleado SET status_emp = 'Despedido' WHERE id_emp = ". $_POST['eliminarEmpleado']);
+}
+
+if(isset($_POST['eliminarCliente'])) {
+    $cnn->query("UPDATE cliente SET status_cli = 'Inactivo' WHERE id_cli = ". $_POST['eliminarCliente']);
 }
 
 if(isset($_POST['venderProductos'])) {
@@ -182,7 +229,7 @@ if(isset($_POST['pagarRegistro'])) {
     $cliente->setFechaRegistro(date("Y-m-d"));
     $cliente->setHoraRegistro(date("H:i:s"));
     $cliente->setTipoCliente("Cliente particular");
-    $nuevoCliente = $cnn->query("INSERT INTO cliente VALUES(null, '". $cliente->getFechaRegistro(). "', '". $cliente->getHoraRegistro(). "', '". $cliente->getTipoCliente(). "', $id)");
+    $nuevoCliente = $cnn->query("INSERT INTO cliente VALUES(null, '". $cliente->getFechaRegistro(). "', '". $cliente->getHoraRegistro(). "', '". $cliente->getTipoCliente(). "', 'Activo', $id)");
     $idCliente = $cnn->query("SELECT max(id_cli) as id FROM cliente LIMIT 1");
     if($idCliente->num_rows > 0) {
         $idCliente = $idCliente->fetch_array(MYSQLI_ASSOC)['id'];
