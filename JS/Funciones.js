@@ -297,7 +297,7 @@ function comprarContado() {
                 let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
                 tuplas.datos.push({"nombre": datosArticulo[0].textContent,"costounidad" : datosArticulo[2].textContent, "cantidadcomprada" : datosArticulo[1].textContent, "total" : datosArticulo[3].textContent, "codigobarras" : tr[i].id});
             };
-        }   
+        }
     //    json= JSON.stringify(obj);
         var datos = new FormData();
         var sol = new XMLHttpRequest;
@@ -364,10 +364,10 @@ function agregarProductos() {
             </div>
         </li>
     `;
+    total = totalAPagar;
 }
 
 function clienteRegistrado() {
-    total = parseFloat(document.getElementById(`totalParaPagar`).textContent.replace("$", ""));
     var datos = new FormData();
     var sol = new XMLHttpRequest;
     datos.append(`clientesRegistrados`, `clientes`);
@@ -381,6 +381,7 @@ function clienteRegistrado() {
 }
 
 function pagarSinRegistro() {
+    console.log(total);
     var datos = new FormData();
     var sol = new XMLHttpRequest;
     datos.append(`pagarContado`, `contado`);
@@ -569,6 +570,94 @@ function verDetallesCredito(id_cre) {
         document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
     }, false);
     
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function verClientes() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`verClientes`, `clientes`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function verClientesMensaje(mensaje) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`verClientes`, `clientes`);
+    mensaje = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
+    }, false);
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function detallesCliente(id_cliente) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`detalleCliente`, `${id_cliente}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function vistaModificarCliente(id_cliente) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`vistaModificarCliente`, `${id_cliente}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+    
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function modificarCliente(id) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`modificarCliente`, `${id}`);
+    let form = document.querySelector("#form");
+    let combo = document.getElementById("sexo");
+    let sexo = combo.options[combo.selectedIndex].text;
+    datos.append(`nombre`,form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sexo}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    if(form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    sol.addEventListener('load', function(e) {
+        // document.getElementsByClassName(`main`)[0].innerHTML = menu;
+        verClientesMensaje(`Cliente ${form.nombre.value} actualizado`);
+    }, false);
+    sol.open('POST', '../PHP/Controlador.php',true);
+    sol.send(datos);
+}
+
+function eliminarCliente(id_cli) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`eliminarCliente`, `${id_cli}`);
+    sol.addEventListener('load', function(e) {
+        verClientesMensaje(`Cliente eliminado con éxito`);
+    }, false);
     sol.open('POST', '../PHP/Controlador.php',true);
     sol.send(datos);
 }
