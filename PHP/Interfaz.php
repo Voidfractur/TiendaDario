@@ -43,7 +43,7 @@ function menu($datosUsuario)
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" onclick='venderSinMensaje();;' style='cursor: pointer;'>Vender un producto</a></li>
-                                <li><a class="dropdown-item" onclick='verCredito();' style='cursor: pointer;'>Ventas hechas a crédito</a></li>
+                                <li><a class="dropdown-item" onclick='verCredito("");' style='cursor: pointer;'>Ventas hechas a crédito</a></li>
                                 <li><a class="dropdown-item" onclick='verVentasHechas();' style='cursor: pointer;'>Ver todas las ventas</a></li>
                             </ul>
                         </li>
@@ -834,14 +834,14 @@ function detallesCredito($creditos, $idCredito) {
                 <td>$ren[TotalProducto]</td>
             </tr>
         HDOC;
-        $total = $ren['TotalProducto'];
+        $total = $ren['restante'];
     }
     $tabla .= <<<HDOC
             <tbodt></tbodt>
         </table>
         <h3>Total a pagar: $total</h3>
         <form action="javascript:liquidarCuenta($idCredito);">
-            <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
+            <button type="button" onclick='verCredito("")' class="btn btn-primary">Regresar</button>
             <input type='submit' class="btn btn-success" value="Liquidar cuenta">
             <div class="input-group mb-3">
                 <span class="input-group-text">$</span>
@@ -1340,3 +1340,10 @@ function viewdetallesVenta($datos)
     return $tabla;
 }
 
+function cuentaLiquidada($mensaje) {
+    return <<<HDOC
+    <div class='alert alert-success alert-dismissible fade show' role='alert'>
+        <strong>¡Felicidades!</strong>$mensaje<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>
+    HDOC;
+}

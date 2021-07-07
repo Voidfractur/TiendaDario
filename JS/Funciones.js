@@ -547,12 +547,12 @@ function comprarMisProductosCredito(id_cliente) {
     sol.send(datos);
 }
 
-function verCredito() {
+function verCredito(mensaje) {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
     datos.append(`vercredito`, `credito`);
     sol.addEventListener('load', function(e) {
-        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + mensaje + e.target.responseText;
     }, false);
 
     sol.open('POST', '../PHP/Controlador.php', true);
@@ -565,7 +565,7 @@ function verDetallesCredito(id_cre, mensaje) {
     let alerta = "";
     if(mensaje != "") {
         alerta = `
-            <div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong>${mensaje}<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>
+            <div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong> ${mensaje}<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>
         `;
     }
     datos.append(`detallescredito`, `${id_cre}`);
@@ -578,8 +578,10 @@ function verDetallesCredito(id_cre, mensaje) {
 }
 
 function liquidarCuenta(idCredito) {
-    let abono = document.getElementById(`abono`).textContent;
-    let totalPagar = document.getElementsByTagName(`h3`).textContent.subString(15);
+    let abono = document.getElementById(`abono`).value;
+    console.log(abono);
+    let totalPagar = document.getElementsByTagName(`h3`)[0].innerText;
+    totalPagar = totalPagar.substr(15);
     if(parseInt(abono) >= parseInt(totalPagar)) {
         var datos = new FormData();
         var sol = new XMLHttpRequest;
@@ -587,13 +589,13 @@ function liquidarCuenta(idCredito) {
         datos.append(`abono`, `${abono}`);
         datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
         sol.addEventListener('load', function(e) {
-            document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+            verCredito(e.target.responseText);
         }, false);
 
         sol.open('POST', '../PHP/Controlador.php', true);
         sol.send(datos);
     }
-    else { verDetallesCredito("La cantidad de dinero no alcanza para liquidar la cuenta.") }
+    else { verDetallesCredito(idCredito, "La cantidad de dinero no alcanza para liquidar la cuenta.") }
 }
 
 function verProductos() {

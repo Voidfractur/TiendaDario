@@ -470,6 +470,11 @@ if (isset($_POST["detallesVenta"])) {
 }
 
 if(isset($_POST['liquidar'])) {
-    
+    date_default_timezone_set("America/Mexico_City");
+    $abonar = $cnn->query("INSERT INTO abonocredito VALUES(null, '". date("Y-m-d") . "', '". date("H:i:s") ."', ". $_POST['abono'] . ", ". $_POST['liquidar'] . ", ". $_POST['empleado'] . ")");
+
+    $liquidado = $cnn->query("UPDATE credito SET status_cre = 'Liquidado' WHERE id_cre = ". $_POST['liquidar'] . "");
+
+    echo cuentaLiquidada("La cuenta ha sido liquidada.");
 }
 
