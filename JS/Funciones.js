@@ -262,8 +262,13 @@ function agregarProducto(codigoBarras) {
 
 function agregarOtroProducto(producto) {
     let aumentar = document.getElementsByClassName(`${producto}`);
+    if(aumentar[2].textContent == 0) {
+        alert("Ya no hay productos en existencia");
+        return;
+    }
     aumentar[1].textContent = parseInt(aumentar[1].textContent) + 1;
-    aumentar[3].textContent = parseInt(aumentar[1].textContent) * parseInt(aumentar[2].textContent);
+    aumentar[2].textContent = parseInt(aumentar[2].textContent) - 1; 
+    aumentar[4].textContent = parseInt(aumentar[1].textContent) * parseInt(aumentar[3].textContent);
     contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
 }
 
@@ -276,7 +281,8 @@ function eliminarUnaPieza(producto) {
         return;
     }
     eliminar[1].textContent = parseInt(eliminar[1].textContent) - 1;
-    eliminar[3].textContent = parseInt(eliminar[3].textContent) - (eliminar[2].textContent);
+    eliminar[2].textContent = parseInt(eliminar[2].textContent) + 1;
+    eliminar[4].textContent = parseInt(eliminar[4].textContent) - (eliminar[3].textContent);
     contenidoProductos = document.getElementsByTagName(`tbody`)[0].innerHTML;
 }
 
@@ -293,7 +299,7 @@ function comprarContado() {
             let tr = document.getElementsByTagName(`tr`);
             for (let i = 1; i < tr.length; i++) {
                 let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
-                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[2].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[3].textContent, "codigobarras": tr[i].id });
+                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[3].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[4].textContent, "codigobarras": tr[i].id });
             };
         }
         var datos = new FormData();
@@ -317,10 +323,9 @@ function comprarCredito() {
             let tr = document.getElementsByTagName(`tr`);
             for (let i = 1; i < tr.length; i++) {
                 let datosArticulo = document.getElementsByClassName(`${tr[i].id}`);
-                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[2].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[3].textContent, "codigobarras": tr[i].id });
+                tuplas.datos.push({ "nombre": datosArticulo[0].textContent, "costounidad": datosArticulo[3].textContent, "cantidadcomprada": datosArticulo[1].textContent, "total": datosArticulo[4].textContent, "codigobarras": tr[i].id });
             };
         }
-        //    json= JSON.stringify(obj);
         var datos = new FormData();
         var sol = new XMLHttpRequest;
         datos.append(`comprarCredito`, `credito`);

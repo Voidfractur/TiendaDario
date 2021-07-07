@@ -485,6 +485,7 @@ function interfazVenderProducto() {
                     <th scope="col">Código de barras</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Cantidad a comprar</th>
+                    <th scope="col">Existencia</th>
                     <th scope="col">Precio por unidad</th>
                     <th scope="col">Total</th>
                     <th scope="col">Acciones</th>
@@ -502,12 +503,14 @@ function agregarProducto($producto) {
         <button type="button" onclick='agregarOtroProducto($producto[codigo_pro]);' class="btn btn-primary">Agregar una unidad más</button>
         
     HDOC;
+    $existencia = $producto['cantidad'] - 1;
     $nuevoProducto = <<<HDOC
         <tr id='$producto[codigo_pro]'>
             <th scope="row">$producto[id_pro]</th>
             <td>$producto[codigo_pro]</td>
             <td class='$producto[codigo_pro]'>$producto[nombre_pro]</td>
             <td class='$producto[codigo_pro]'>1</td>
+            <td class='$producto[codigo_pro]'>$existencia</td>
             <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
             <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
             <td>$acciones</td>
