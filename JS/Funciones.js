@@ -30,8 +30,13 @@ function inicioSesion() {
     datos.append(`username`, form.username.value);
     datos.append(`password`, form.password.value);
     sol.addEventListener('load', function(e) {
-        menu = e.target.responseText;
-        document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
+        if(e.target.responseText != "Nombre de usuario o contraseña incorrectos") {
+            menu = e.target.responseText;
+            document.getElementsByClassName(`main`)[0].innerHTML = e.target.responseText;
+        }
+        else {
+            alert("Usuario o contraseña incorrectos");
+        }
     }, false);
 
     sol.open('POST', '../PHP/Controlador.php', true);
