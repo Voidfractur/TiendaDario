@@ -559,6 +559,32 @@ function verCredito(mensaje) {
     sol.send(datos);
 }
 
+function nombreCliente() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    console.log(document.getElementById('nombre').value);
+    datos.append(`filtrarnombre`, `${document.getElementById('nombre').value}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function nombreProducto() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    console.log(document.getElementById('producto').value);
+    datos.append(`filtrarproducto`, `${document.getElementById('producto').value}`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
 function verDetallesCredito(id_cre, mensaje) {
     var datos = new FormData();
     var sol = new XMLHttpRequest;

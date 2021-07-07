@@ -769,9 +769,18 @@ function clientesCredito($clientes)
     return $tabla;
 }
 
-function mostrarCreditos($creditos)
-{
+function mostrarCreditos($creditos) {
     $tabla = <<<HDOC
+        <form action="javascript:nombreCliente();" style='width: 600px; margin-bottom: 10px;'>
+            <input type='text' id='nombre' placeholder='Buscar por nombre del cliente'>
+            <input type='submit' class="btn btn-success" value="Buscar cliente">
+        </form>
+        <form action="javascript:nombreProducto();" style='width: 600px; margin-bottom: 10px;'>
+            <input type='text' id='producto' placeholder='Buscar por producto'>
+            <input type='submit' class="btn btn-success" value="Buscar producto">
+        </form>
+    HDOC;
+    $tabla .= <<<HDOC
     <table class="table">
         <thead>
             <tr>
@@ -794,7 +803,7 @@ function mostrarCreditos($creditos)
         $tabla .= <<<HDOC
             <tr id='$ren[credito]'>
                 <th scope="row">$ren[cliente]</th>
-                <td>$ren[persona]</td>
+                <td>$ren[persona] $ren[paterno] $ren[materno]</td>
                 <td>$ren[producto]</td>
                 <td>$ren[fechacompra]</td>
                 <td>$ren[total]</td>
@@ -840,13 +849,13 @@ function detallesCredito($creditos, $idCredito) {
             <tbodt></tbodt>
         </table>
         <h3>Total a pagar: $total</h3>
-        <form action="javascript:liquidarCuenta($idCredito);">
+        <form action="javascript:liquidarCuenta($idCredito);" style='width: 600px;'>
             <button type="button" onclick='verCredito("")' class="btn btn-primary">Regresar</button>
             <input type='submit' class="btn btn-success" value="Liquidar cuenta">
             <div class="input-group mb-3">
                 <span class="input-group-text">$</span>
                 <span class="input-group-text">0.00</span>
-                <input type="number" class="form-control" id="abono" style='width: 100px;' aria-label="Dollar amount (with dot and two decimal places)" required>
+                <input type="number" class="form-control" id="abono" aria-label="Dollar amount (with dot and two decimal places)" required>
             </div>
         </form>
     HDOC;

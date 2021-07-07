@@ -4,11 +4,18 @@ class Credito {
     private $status;
 
     public function __construct($pagoInicial, $status) {
-        $this->pagoInicial = $pagoInicial;
-        $this->status = $status;
+        if($pagoInicial == "") {
+            $this->pagoInicial = 0;
+            $this->status = $status;
+        }
+        else {
+            $this->pagoInicial = $pagoInicial;
+            $this->status = $status;
+        }
     }
 
     public function setPagoInicial($inicial) {
+        if($inicial == "") { $this->pagoInicial = 0; return; }
         $this->pagoInicial = $inicial;
     }
 
