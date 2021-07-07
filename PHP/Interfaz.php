@@ -505,6 +505,7 @@ function interfazVenderProducto()
                     <th scope="col">Código de barras</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Cantidad a comprar</th>
+                    <th scope="col">Existencia</th>
                     <th scope="col">Precio por unidad</th>
                     <th scope="col">Total</th>
                     <th scope="col">Acciones</th>
@@ -523,12 +524,14 @@ function agregarProducto($producto)
         <button type="button" onclick='agregarOtroProducto($producto[codigo_pro]);' class="btn btn-primary">Agregar una unidad más</button>
         
     HDOC;
+    $existencia = $producto['cantidad'] - 1;
     $nuevoProducto = <<<HDOC
         <tr id='$producto[codigo_pro]'>
             <th scope="row">$producto[id_pro]</th>
             <td>$producto[codigo_pro]</td>
             <td class='$producto[codigo_pro]'>$producto[nombre_pro]</td>
             <td class='$producto[codigo_pro]'>1</td>
+            <td class='$producto[codigo_pro]'>$existencia</td>
             <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
             <td class='$producto[codigo_pro]'>$producto[precio_pro]</td>
             <td>$acciones</td>
@@ -786,7 +789,7 @@ function mostrarCreditos($creditos)
     HDOC;
     while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
         $acciones = <<<HDOC
-            <button type="button" onclick='verDetallesCredito($ren[credito])' class="btn btn-primary">Detalles</button>
+            <button type="button" onclick='verDetallesCredito($ren[credito], "")' class="btn btn-primary">Detalles</button>
         HDOC;
         $tabla .= <<<HDOC
             <tr id='$ren[credito]'>
@@ -805,11 +808,9 @@ function mostrarCreditos($creditos)
     return $tabla;
 }
 
-function detallesCredito($creditos)
-{
+
+function detallesCredito($creditos, $idCredito) {
     $tabla = <<<HDOC
-    <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
-    <button type="button" onclick='liquidarCuenta()' class="btn btn-success">Liquidar</button>
     <table class="table">
         <thead>
             <tr>
@@ -822,6 +823,7 @@ function detallesCredito($creditos)
         </thead>
         <tbody>
     HDOC;
+    $total;
     while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
         $tabla .= <<<HDOC
             <tr id='$ren[credito]'>
@@ -832,8 +834,22 @@ function detallesCredito($creditos)
                 <td>$ren[TotalProducto]</td>
             </tr>
         HDOC;
+        $total = $ren['TotalProducto'];
     }
-    $tabla .= "<tbodt></tbodt><table></table>";
+    $tabla .= <<<HDOC
+            <tbodt></tbodt>
+        </table>
+        <h3>Total a pagar: $total</h3>
+        <form action="javascript:liquidarCuenta($idCredito);">
+            <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
+            <input type='submit' class="btn btn-success" value="Liquidar cuenta">
+            <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <span class="input-group-text">0.00</span>
+                <input type="number" class="form-control" id="abono" style='width: 100px;' aria-label="Dollar amount (with dot and two decimal places)" required>
+            </div>
+        </form>
+    HDOC;
     return $tabla;
 }
 

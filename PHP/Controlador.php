@@ -192,13 +192,12 @@ if (isset($_POST['comprarContado'])) {
     echo vistaComprarContado();
 }
 
-if (isset($_POST['clientesRegistrados'])) {
-    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, c.id_cli as cliente, p.id_per as persona, foto_per as perfil FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.tipo_cli = 'Cliente particular'");
-    if ($consult->num_rows > 0) {
-        echo clientes($consult);
-    } else {
-        echo 0;
-    }
+
+if(isset($_POST['clientesRegistrados'])) {
+    $consult = $cnn->query("SELECT nombre_per as nombre, ap_per as paterno, am_per as materno, c.id_cli as cliente, p.id_per as persona, foto_per as perfil FROM cliente c join persona p on c.cve_per = p.id_per WHERE c.tipo_cli = 'Cliente particular' AND status_cli = 'Activo'");
+    if($consult->num_rows > 0) { echo clientes($consult); }
+    else { echo 0; }
+
 }
 
 if (isset($_POST['pagarContado'])) {
@@ -257,11 +256,20 @@ if (isset($_POST['pagarRegistro'])) {
 
 if (isset($_POST['renglonticket'])) {
     $idTicket = $cnn->query("SELECT max(id_tic) as id FROM ticket");
-    $idProducto = $cnn->query("SELECT id_pro as id FROM producto WHERE codigo_pro = '" . $_POST['codigobarras'] . "'");
-    if ($idTicket->num_rows > 0 && $idProducto->num_rows > 0) {
+    $idProducto = $cnn->query("SELECT id_pro as id, cantidad FROM producto WHERE codigo_pro = '". $_POST['codigobarras']. "'");
+    if($idTicket->num_rows > 0 && $idProducto->num_rows > 0) {
         $idTicket = $idTicket->fetch_array(MYSQLI_ASSOC)['id'];
-        $idProducto = $idProducto->fetch_array(MYSQLI_ASSOC)['id'];
-        $renglonticket = $cnn->query("INSERT INTO renglonticket VALUES(null, " . $_POST['cantidad'] . ", " . $_POST['precio'] . ", $idProducto, $idTicket)");
+        $producto = $idProducto->fetch_array(MYSQLI_ASSOC);
+        $cantidad = $producto['cantidad'];
+        $idProducto = $producto['id'];
+        $renglonticket = $cnn->query("INSERT INTO renglonticket VALUES(null, ". $_POST['cantidad']. ", ". $_POST['precio']. ", $idProducto, $idTicket)");
+        $cantidad = $cantidad - $_POST['cantidad'];
+        if($cantidad == 0) {
+            $cnn->query("UPDATE producto SET status_pro = 0, cantidad = 0 WHERE codigo_pro = '". $_POST['codigobarras']. "'");
+        }
+        else {
+            $cnn->query("UPDATE producto SET cantidad = $cantidad WHERE codigo_pro = '". $_POST['codigobarras']. "'");
+        }
         echo $renglonticket;
     }
 }
@@ -323,12 +331,10 @@ if (isset($_POST['detallescredito'])) {
     FROM credito cre join ticket t
     on cre.cve_tic = t.id_tic join renglonticket rt
     on rt.cve_tic = t.id_tic join producto p
-    on rt.cve_pro = p.id_pro WHERE cre.id_cre = " . $_POST['detallescredito'] . "");
-    if ($creditos->num_rows > 0) {
-        echo detallesCredito($creditos);
-    } else {
-        echo "Sin datos";
-    }
+    on rt.cve_pro = p.id_pro WHERE cre.id_cre = ". $_POST['detallescredito'] . "");
+    if($creditos->num_rows > 0) {
+        echo detallesCredito($creditos, $_POST['detallescredito']);
+    } else { echo "Sin datos"; }
 }
 if (isset($_POST['listarProductos'])) {
     $producto = new Producto();
@@ -441,6 +447,7 @@ if (isset($_POST['UpdateProducto'])) {
     } else {
         echo "409";
     }
+
 }
 
 if (isset($_POST['viewReportes'])) {
@@ -461,3 +468,8 @@ if (isset($_POST["detallesVenta"])) {
     $datos = $reporte->getDetallesTicket($_POST["id_tic"]);
     echo viewdetallesVenta($datos);
 }
+
+if(isset($_POST['liquidar'])) {
+    
+}
+
