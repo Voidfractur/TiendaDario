@@ -757,7 +757,7 @@ function mostrarCreditos($creditos) {
     HDOC;
     while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
         $acciones = <<<HDOC
-            <button type="button" onclick='verDetallesCredito($ren[credito])' class="btn btn-primary">Detalles</button>
+            <button type="button" onclick='verDetallesCredito($ren[credito], "")' class="btn btn-primary">Detalles</button>
         HDOC;
         $tabla .= <<<HDOC
             <tr id='$ren[credito]'>
@@ -776,10 +776,8 @@ function mostrarCreditos($creditos) {
     return $tabla;
 }
 
-function detallesCredito($creditos) {
+function detallesCredito($creditos, $idCredito) {
     $tabla = <<<HDOC
-    <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
-    <button type="button" onclick='liquidarCuenta()' class="btn btn-success">Liquidar</button>
     <table class="table">
         <thead>
             <tr>
@@ -792,6 +790,7 @@ function detallesCredito($creditos) {
         </thead>
         <tbody>
     HDOC;
+    $total;
     while ($ren = $creditos->fetch_array(MYSQLI_ASSOC)) {
         $tabla .= <<<HDOC
             <tr id='$ren[credito]'>
@@ -802,8 +801,22 @@ function detallesCredito($creditos) {
                 <td>$ren[TotalProducto]</td>
             </tr>
         HDOC;
+        $total = $ren['TotalProducto'];
     }
-    $tabla .= "<tbodt></tbodt><table></table>";
+    $tabla .= <<<HDOC
+            <tbodt></tbodt>
+        </table>
+        <h3>Total a pagar: $total</h3>
+        <form action="javascript:liquidarCuenta($idCredito);">
+            <button type="button" onclick='verCredito()' class="btn btn-primary">Regresar</button>
+            <input type='submit' class="btn btn-success" value="Liquidar cuenta">
+            <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <span class="input-group-text">0.00</span>
+                <input type="number" class="form-control" id="abono" style='width: 100px;' aria-label="Dollar amount (with dot and two decimal places)" required>
+            </div>
+        </form>
+    HDOC;
     return $tabla;
 }
 

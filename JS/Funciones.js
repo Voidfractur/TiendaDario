@@ -559,16 +559,41 @@ function verCredito() {
     sol.send(datos);
 }
 
-function verDetallesCredito(id_cre) {
+function verDetallesCredito(id_cre, mensaje) {
     var datos = new FormData();
     var sol = new XMLHttpRequest;
+    let alerta = "";
+    if(mensaje != "") {
+        alerta = `
+            <div class='alert alert-danger alert-dismissible fade show' role='alert'><strong>Error</strong>${mensaje}<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>
+        `;
+    }
     datos.append(`detallescredito`, `${id_cre}`);
     sol.addEventListener('load', function(e) {
-        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + alerta + e.target.responseText;
     }, false);
 
     sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
+}
+
+function liquidarCuenta(idCredito) {
+    let abono = document.getElementById(`abono`).textContent;
+    let totalPagar = document.getElementsByTagName(`h3`).textContent.subString(15);
+    if(parseInt(abono) >= parseInt(totalPagar)) {
+        var datos = new FormData();
+        var sol = new XMLHttpRequest;
+        datos.append(`liquidar`, `${idCredito}`);
+        datos.append(`abono`, `${abono}`);
+        datos.append('empleado', document.getElementsByClassName(`usuario_logueado`)[0].id);
+        sol.addEventListener('load', function(e) {
+            document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+        }, false);
+
+        sol.open('POST', '../PHP/Controlador.php', true);
+        sol.send(datos);
+    }
+    else { verDetallesCredito("La cantidad de dinero no alcanza para liquidar la cuenta.") }
 }
 
 function verProductos() {

@@ -244,8 +244,9 @@ if(isset($_POST['renglonticket'])) {
     $idProducto = $cnn->query("SELECT id_pro as id, cantidad FROM producto WHERE codigo_pro = '". $_POST['codigobarras']. "'");
     if($idTicket->num_rows > 0 && $idProducto->num_rows > 0) {
         $idTicket = $idTicket->fetch_array(MYSQLI_ASSOC)['id'];
-        $cantidad = $idProducto->fetch_array(MYSQLI_ASSOC)['cantidad'];
-        $idProducto = $idProducto->fetch_array(MYSQLI_ASSOC)['id'];
+        $producto = $idProducto->fetch_array(MYSQLI_ASSOC);
+        $cantidad = $producto['cantidad'];
+        $idProducto = $producto['id'];
         $renglonticket = $cnn->query("INSERT INTO renglonticket VALUES(null, ". $_POST['cantidad']. ", ". $_POST['precio']. ", $idProducto, $idTicket)");
         $cantidad = $cantidad - $_POST['cantidad'];
         if($cantidad == 0) {
@@ -313,7 +314,7 @@ if(isset($_POST['detallescredito'])) {
     on rt.cve_tic = t.id_tic join producto p
     on rt.cve_pro = p.id_pro WHERE cre.id_cre = ". $_POST['detallescredito'] . "");
     if($creditos->num_rows > 0) {
-        echo detallesCredito($creditos);
+        echo detallesCredito($creditos, $_POST['detallescredito']);
     } else { echo "Sin datos"; }
 }
 if(isset($_POST['listarProductos'])) {
@@ -424,5 +425,9 @@ echo "200";
     }else{
 echo "409";
     }
+    
+}
+
+if(isset($_POST['liquidar'])) {
     
 }
