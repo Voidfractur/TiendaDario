@@ -938,3 +938,72 @@ function ModificarProducto() {
     sol.open('POST', '../PHP/Controlador.php', true);
     sol.send(datos);
 }
+
+function verVentasHechas() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`viewReportes`, `all`);
+
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function buscarVentasHechas() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+
+    let fecha1 = document.getElementById("bfecha1");
+    let fecha2 = document.getElementById("bfecha2");
+    let cliente = document.getElementById("bcliente");
+    let radio = document.querySelector('input[name="inlineRadioOptions"]:checked');
+    datos.append(`buscarVentas`, `all`);
+    datos.append(`fecha1`, fecha1.value);
+    datos.append(`fecha2`, fecha2.value);
+    datos.append(`cliente`, cliente.value);
+    datos.append(`radio`, radio.value);
+    sol.addEventListener('load', function(e) {
+        document.getElementById(`bodytablareportes`).innerHTML = e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function buscarVentasHechaspdf() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+
+    let fecha1 = document.getElementById("bfecha1");
+    let fecha2 = document.getElementById("bfecha2");
+    let cliente = document.getElementById("bcliente");
+    let radio = document.getElementById('radio');
+    datos.append(`buscarVentas`, `all`);
+    datos.append(`fecha1`, fecha1.value);
+    datos.append(`fecha2`, fecha2.value);
+    datos.append(`cliente`, cliente.value);
+    datos.append(`radio`, radio.value);
+    sol.addEventListener('load', function(e) {
+        document.getElementById(`bodytablareportes`).innerHTML = e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function detallesVenta(id_tic) {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`detallesVenta`, `new`);
+    datos.append(`id_tic`, id_tic);
+
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}

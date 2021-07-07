@@ -1,9 +1,11 @@
 <?php
-function mostrarLogin() {
+function mostrarLogin()
+{
     return header('Location: ../HTML/Login.html');
 }
 
-function menu($datosUsuario) {
+function menu($datosUsuario)
+{
     $id = $datosUsuario->fetch_array(MYSQLI_ASSOC)['id_emp'];
     echo <<<HDOC
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -55,7 +57,8 @@ function menu($datosUsuario) {
     HDOC;
 }
 
-function verUsuarios($usuarios) {
+function verUsuarios($usuarios)
+{
     $tabla = <<<HDOC
         <form class="d-flex" action='javascript:nuevoEmpleado();' style='margin-top: 20px; margin-bottom = 20px;'>
             <input type="submit" value="Nuevo empleado" class='btn btn-success'>
@@ -77,16 +80,18 @@ function verUsuarios($usuarios) {
         HDOC;
     while ($ren = $usuarios->fetch_array(MYSQLI_ASSOC)) {
         $img = "";
-        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-        else { $img = "../Images/noPhoto.png"; }
+        if ($ren["perfil"] != NULL) {
+            $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+        } else {
+            $img = "../Images/noPhoto.png";
+        }
         $acciones = "";
-        if($_POST['usuarioLogueado'] == $ren['empleado']) {
+        if ($_POST['usuarioLogueado'] == $ren['empleado']) {
             $acciones = <<<HDOC
                 <button type="button" onclick='mostrarDetalles($ren[empleado])' class="btn btn-secondary">Detalles</button>
                 <button type="button" onclick='vistaModificar($ren[empleado])' class="btn btn-primary">Editar</button>
             HDOC;
-        }
-        else {
+        } else {
             $acciones = <<<HDOC
                 <button type="button" onclick='mostrarDetalles($ren[empleado]);' class="btn btn-secondary">Detalles</button>
                 <button type="button" onclick='vistaModificar($ren[empleado]);' class="btn btn-primary">Editar</button>
@@ -110,7 +115,8 @@ function verUsuarios($usuarios) {
     return $tabla;
 }
 
-function verClientes($usuarios) {
+function verClientes($usuarios)
+{
     $tabla = <<<HDOC
         <form class="d-flex" action='javascript:nuevoCliente();' style='margin-top: 20px; margin-bottom = 20px;'>
             <input type="submit" value="Nuevo cliente" class='btn btn-success'>
@@ -134,15 +140,17 @@ function verClientes($usuarios) {
         $img = "";
         $telefono = $ren['telefono'] != "" ? $ren['telefono'] : "Sin número registrado";
         $correo = $ren['correo'] != "" ? $ren['correo'] : "Sin correo electrónico registrado";
-        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-        else { $img = "../Images/noPhoto.png"; }
+        if ($ren["perfil"] != NULL) {
+            $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+        } else {
+            $img = "../Images/noPhoto.png";
+        }
         $acciones = "";
-        if($ren['nombre'] == "Público en general") {
+        if ($ren['nombre'] == "Público en general") {
             $acciones = <<<HDOC
                 <button type="button" onclick='detallesCliente($ren[cliente]);' class="btn btn-secondary">Detalles</button>
             HDOC;
-        }
-        else {
+        } else {
             $acciones = <<<HDOC
                 <button type="button" onclick='detallesCliente($ren[cliente]);' class="btn btn-secondary">Detalles</button>
                 <button type="button" onclick='vistaModificarCliente($ren[cliente]);' class="btn btn-primary">Editar</button>
@@ -166,14 +174,18 @@ function verClientes($usuarios) {
     return $tabla;
 }
 
-function detalleUsuario($usuario) {
+function detalleUsuario($usuario)
+{
     $ren = $usuario->fetch_array(MYSQLI_ASSOC);
     $datosUsuario = <<<HDOC
         <ol class="list-group list-group-numbered">
     HDOC;
     $img = "";
-    if ($ren["foto"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-    else { $img = "noPhoto.png"; }
+    if ($ren["foto"] != NULL) {
+        $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+    } else {
+        $img = "noPhoto.png";
+    }
     $datosUsuario .= <<<HDOC
         <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-2 me-auto">
@@ -234,14 +246,18 @@ function detalleUsuario($usuario) {
     return $datosUsuario;
 }
 
-function detalleCliente($usuario) {
+function detalleCliente($usuario)
+{
     $ren = $usuario->fetch_array(MYSQLI_ASSOC);
     $datosUsuario = <<<HDOC
         <ol class="list-group list-group-numbered">
     HDOC;
     $img = "";
-    if ($ren["foto"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-    else { $img = "../Images/noPhoto.png"; }
+    if ($ren["foto"] != NULL) {
+        $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+    } else {
+        $img = "../Images/noPhoto.png";
+    }
     $telefono = $ren['telefono'] != "" ? $ren['telefono'] : "Sin número registrado";
     $correo = $ren['correo'] != "" ? $ren['correo'] : "Sin correo electrónico registrado";
     $datosUsuario .= <<<HDOC
@@ -304,7 +320,8 @@ function detalleCliente($usuario) {
     return $datosUsuario;
 }
 
-function vistaModificar($consult) {
+function vistaModificar($consult)
+{
     $ren = $consult->fetch_array(MYSQLI_ASSOC);
     $datosUsuario = <<<HDOC
         <form action='javascript:modificar($ren[persona]);' id='form'>
@@ -386,7 +403,8 @@ function vistaModificar($consult) {
     return $datosUsuario;
 }
 
-function vistaModificarCliente($consult) {
+function vistaModificarCliente($consult)
+{
     $ren = $consult->fetch_array(MYSQLI_ASSOC);
     $datosUsuario = <<<HDOC
         <form action='javascript:modificarCliente($ren[persona]);' id='form'>
@@ -459,11 +477,13 @@ function vistaModificarCliente($consult) {
     return $datosUsuario;
 }
 
-function interfazUsuario() {
+function interfazUsuario()
+{
     return header('Location: ../HTML/SignUp.html');
 }
 
-function interfazVenderProducto() {
+function interfazVenderProducto()
+{
     $vender = <<<HDOC
         <form class="row g-3" style='margin-top: 10px;' id='form' action='javascript:buscarProducto();'>
             <div class="col-auto">
@@ -496,7 +516,8 @@ function interfazVenderProducto() {
     return $vender;
 }
 
-function agregarProducto($producto) {
+function agregarProducto($producto)
+{
     $producto = $producto->fetch_array(MYSQLI_ASSOC);
     $acciones = <<<HDOC
         <button type="button" onclick='eliminarUnaPieza($producto[codigo_pro]);' class="btn btn-danger">Eliminar una unidad</button>
@@ -519,7 +540,8 @@ function agregarProducto($producto) {
     return $nuevoProducto;
 }
 
-function vistaComprarContado() {
+function vistaComprarContado()
+{
     $compra = <<<HDOC
         <div class="accordion accordion-flush" id="accordionFlushExample">
             <div class="accordion-item">
@@ -586,7 +608,8 @@ function vistaComprarContado() {
     return $compra;
 }
 
-function clientes($clientes) {
+function clientes($clientes)
+{
     $tabla = <<<HDOC
     <button type="button" onclick='comprarContado();' class="btn btn-primary">Regresar</button>
     <table class="table">
@@ -604,8 +627,11 @@ function clientes($clientes) {
     HDOC;
     while ($ren = $clientes->fetch_array(MYSQLI_ASSOC)) {
         $img = "";
-        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-        else { $img = "../Images/noPhoto.png"; }
+        if ($ren["perfil"] != NULL) {
+            $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+        } else {
+            $img = "../Images/noPhoto.png";
+        }
         $acciones = <<<HDOC
             <button type="button" onclick='comprarMisProductos($ren[cliente])' class="btn btn-success">Comprar</button>
         HDOC;
@@ -624,7 +650,8 @@ function clientes($clientes) {
     return $tabla;
 }
 
-function vistaComprarCredito() {
+function vistaComprarCredito()
+{
     $compra = <<<HDOC
         <div class="accordion accordion-flush" id="accordionFlushExample">
             <div class="accordion-item">
@@ -696,7 +723,8 @@ function vistaComprarCredito() {
     return $compra;
 }
 
-function clientesCredito($clientes) {
+function clientesCredito($clientes)
+{
     $tabla = <<<HDOC
     <button type="button" onclick='comprarCredito();' class="btn btn-primary">Regresar</button>
     <div class="col-auto">
@@ -718,8 +746,11 @@ function clientesCredito($clientes) {
     HDOC;
     while ($ren = $clientes->fetch_array(MYSQLI_ASSOC)) {
         $img = "";
-        if ($ren["perfil"] != NULL) { $img = "../PHP/MostrarImagen.php?id=$ren[persona]"; }
-        else { $img = "../Images/noPhoto.png"; }
+        if ($ren["perfil"] != NULL) {
+            $img = "../PHP/MostrarImagen.php?id=$ren[persona]";
+        } else {
+            $img = "../Images/noPhoto.png";
+        }
         $acciones = <<<HDOC
             <button type="button" onclick='comprarMisProductosCredito($ren[cliente])' class="btn btn-success">Comprar</button>
         HDOC;
@@ -738,7 +769,8 @@ function clientesCredito($clientes) {
     return $tabla;
 }
 
-function mostrarCreditos($creditos) {
+function mostrarCreditos($creditos)
+{
     $tabla = <<<HDOC
     <table class="table">
         <thead>
@@ -775,6 +807,7 @@ function mostrarCreditos($creditos) {
     $tabla .= "<tbodt></tbodt><table></table>";
     return $tabla;
 }
+
 
 function detallesCredito($creditos, $idCredito) {
     $tabla = <<<HDOC
@@ -820,7 +853,8 @@ function detallesCredito($creditos, $idCredito) {
     return $tabla;
 }
 
-function viewProductos($datos){
+function viewProductos($datos)
+{
     $tabla = <<<HDOC
     <div class='container'>
     <table  class='table table-striped table-hover'>
@@ -845,9 +879,11 @@ function viewProductos($datos){
             $img = "<img src='../Images/noimage.png' width='100'>";
         }*/
         $img = "";
-        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
-        
-        else { $img = "../Images/noimage.png"; }
+        if ($ren["img_contenido"] != NULL) {
+            $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]";
+        } else {
+            $img = "../Images/noimage.png";
+        }
         $tabla .= <<<HDOC
         <tr id='r$ren[id_pro]'>
         <td>$ren[id_pro]</td>
@@ -868,7 +904,8 @@ function viewProductos($datos){
     return $tabla;
 }
 
-function viewAddProductos(){
+function viewAddProductos()
+{
     $tabla = <<<HDOC
     <br>
     <br>
@@ -914,7 +951,8 @@ function viewAddProductos(){
     return $tabla;
 }
 
-function viewProducto($datos){
+function viewProducto($datos)
+{
     $tabla = "";
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
         /*if ($ren["img_ruta"] != Null) {
@@ -923,8 +961,11 @@ function viewProducto($datos){
             $img = "../Images/noimage.png";
         }*/
         $img = "";
-        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
-        else { $img = "../Images/noimage.png"; }
+        if ($ren["img_contenido"] != NULL) {
+            $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]";
+        } else {
+            $img = "../Images/noimage.png";
+        }
         $tabla .= <<<HDOC
         <div class="d-flex justify-content-center">
         <div class="card" style="width: 18rem;">
@@ -947,7 +988,8 @@ function viewProducto($datos){
     return $tabla;
 }
 
-function viewDeleteProducto($datos){
+function viewDeleteProducto($datos)
+{
     $tabla = "";
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
         /*if ($ren["img_ruta"] != Null) {
@@ -956,8 +998,11 @@ function viewDeleteProducto($datos){
             $img = "../Images/noimage.png";
         }*/
         $img = "";
-        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
-        else { $img = "../Images/noimage.png"; }
+        if ($ren["img_contenido"] != NULL) {
+            $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]";
+        } else {
+            $img = "../Images/noimage.png";
+        }
         $tabla .= <<<HDOC
         <div class="d-flex justify-content-center">
         <div class="card" style="width: 18rem;">
@@ -983,12 +1028,16 @@ function viewDeleteProducto($datos){
     return $tabla;
 }
 
-function viewModificarProducto($datos){
+function viewModificarProducto($datos)
+{
     while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
         $img = "";
-        if ($ren["img_contenido"] != NULL) { $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]"; }
-        else { $img = "../Images/noimage.png"; }
-    $tabla = <<<HDOC
+        if ($ren["img_contenido"] != NULL) {
+            $img = "../PHP/MostrarImagenProducto.php?id=$ren[id_pro]";
+        } else {
+            $img = "../Images/noimage.png";
+        }
+        $tabla = <<<HDOC
     <br>
     <br>
     <div class="container bg-dark text-light rounded">
@@ -1038,6 +1087,256 @@ function viewModificarProducto($datos){
     </div>
     HDOC;
     }
+    return $tabla;
+}
+
+function viewReportes($datos,$clientes)
+{
+    $sumatotal=0;
+    $licli = "";
+    while ($ren = $clientes->fetch_array(MYSQLI_ASSOC)) {
+        $licli .= <<<HDOC
+            <option value="$ren[id_cli]"> $ren[nombre_per] $ren[ap_per]</option>
+        HDOC;
+    }
+    $tabla = <<<HDOC
+    <form class="row g-4" action="javascript:buscarVentasHechas()" method="POST">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid pl-1">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+          <div class="input-group mb-3">
+            <input type="date" class="form-control" id="bfecha1" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
+          </li>
+          <li class="nav-item">
+          <div class="input-group mb-3">
+            <input type="date" class="form-control" id="bfecha2" aria-label="Username" aria-describedby="basic-addon1" required>
+          </div>
+          </li>
+          <li class="nav-item">
+          <select class="form-select" aria-label="Default select example" id="bcliente">
+          <option value = "0" selected> Todos los clientes </option>
+          $licli
+          </select>
+          </li>
+          <li class="nav-item text-light">
+          <div class="form-check form-check-inline ">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="contado">
+          <label class="form-check-label" for="inlineRadio1">Contado</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="credito">
+          <label class="form-check-label" for="inlineRadio2">Credito</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="ambos" checked>
+          <label class="form-check-label" for="inlineRadio3">Ambos</label>
+        </div>
+          </li>
+          <li class="nav-item">
+          <div class="input-group mb-3">
+          <button type="Submit" class="btn btn-primary">Buscar</button>
+          </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  </form>
+HDOC;
+    $tabla .= <<<HDOC
+    <div class='container'>
+    <table  class='table table-striped table-hover'>
+        <thead>
+            <tr>
+                <th>Numero</th>
+                <th>Fecha de la venta</th>
+                <th>Total</th>
+                <th>Nombre del cliente</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id = "bodytablareportes">
+    HDOC;
+    $cont = 0;
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        $cont++;
+        $tabla .= <<<HDOC
+        <tr id='r$ren[id_tic]'>
+        <td>$cont</td>
+        <td>$ren[fechaventa_tic]</td>
+        <td>$$ren[total_tic].00</td>
+        <td>$ren[nombre_per] $ren[ap_per]</td>
+        <td>
+        <button type="button" class="btn btn-success " onclick='javascript:detallesVenta($ren[id_tic])'>Informacion</button>
+        </td>
+           </tr> 
+        HDOC;
+        $sumatotal+=$ren["total_tic"];
+    }
+    if($datos->num_rows <= 0) {
+        $tabla .= <<<HDOC
+        <tr>
+        <td> <h3> Sin ventas en el dia o rango de dias </h3> </td>
+        </tr> 
+        HDOC;
+    }else{
+        $tabla .= <<<HDOC
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h5>Numero de ventas $cont</h5></div>
+        </td>
+        <td>
+        <FORM action="../pruebapdf.php" method="post" target="_blank" >
+        <input type="hidden" value="0" id="hfecha" name="fecha1">
+        <input type="hidden" value="0" id="hfecha2" name="fecha2">
+        <input type="hidden" value="0" id="hcliente" name="cliente">
+        <input type="hidden" value="ambos" id="hradio" name="radio">
+        <button type="submit" class="btn btn-secondary" onclick="">Descargar Pdf</button>
+        </FORM>
+        </td>
+        <td>
+        <FORM action="../php/generarecxel.php" method="post" target="_blank" >
+        <input type="hidden" value="0" id="hfecha" name="fecha1">
+        <input type="hidden" value="0" id="hfecha2" name="fecha2">
+        <input type="hidden" value="0" id="hcliente" name="cliente">
+        <input type="hidden" value="ambos" id="hradio" name="radio">
+        <button type="submit" class="btn btn-success" onclick="">Descargar Excel</button>
+        </FORM>
+        </td>
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h4> Total: $$sumatotal.00</h4></div>
+        </td>
+        HDOC;
+    }
+    $tabla .= "</tbody></table></div>";
+    return $tabla;
+}
+
+function viewbusqueda($datos,$fecha1,$fecha2,$cliente,$radio)
+{
+    $tabla = "";
+    $sumatotal=0;
+    $cont = 0;
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        $cont++;
+        $tabla .= <<<HDOC
+        <tr id='r$ren[id_tic]'>
+        <td>$cont</td>
+        <td>$ren[fechaventa_tic]</td>
+        <td>$$ren[total_tic].00</td>
+        <td>$ren[nombre_per] $ren[ap_per]</td>
+        <td>
+        <button type="button" class="btn btn-success " onclick='javascript:detallesVenta($ren[id_tic])'>Informacion</button>
+        </td>
+           </tr> 
+        HDOC;
+        $sumatotal+=$ren["total_tic"];
+    }
+    if($datos->num_rows <= 0) {
+        $tabla .= <<<HDOC
+        <tr>
+        <td> <h3> Sin ventas en el dia o rango de dias </h3> </td>
+        </tr> 
+        HDOC;
+    }else{
+        $tabla .= <<<HDOC
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h5>Numero de ventas $cont</h5></div>
+        </td>
+        <td>
+        <FORM action="../pruebapdf.php" method="post" target="_blank" >
+        <input type="hidden" value="$fecha1" id="hfecha" name="fecha1">
+        <input type="hidden" value="$fecha2" id="hfecha2" name="fecha2">
+        <input type="hidden" value="$cliente" id="hcliente" name="cliente">
+        <input type="hidden" value="$radio" id="hradio" name="radio">
+        <button type="submit" class="btn btn-secondary" onclick="">Descargar Pdf</button>
+        </FORM>
+        </td>
+        <td>
+        <FORM action="../php/generarecxel.php" method="post" target="_blank" >
+        <input type="hidden" value="$fecha1" id="hfecha" name="fecha1">
+        <input type="hidden" value="$fecha2" id="hfecha2" name="fecha2">
+        <input type="hidden" value="$cliente" id="hcliente" name="cliente">
+        <input type="hidden" value="$radio" id="hradio" name="radio">
+        <button type="submit" class="btn btn-success" onclick="">Descargar Excel</button>
+        </FORM>
+        </td>
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h4> Total: $$sumatotal.00</h4></div>
+        </td>
+
+        HDOC;
+    }
+    return $tabla;
+}
+
+function viewdetallesVenta($datos)
+{
+    $sumatotal=0;
+    $tabla = <<<HDOC
+    <div class='container'>
+    <table  class='table table-striped table-hover'>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Codigo</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Importe</th>
+            </tr>
+        </thead>
+        <tbody id = "bodytablareportes">
+    HDOC;
+    $cont = 0;
+    while ($ren = $datos->fetch_array(MYSQLI_ASSOC)) {
+        $cont++;
+        $tabla .= <<<HDOC
+        <tr>
+        <td>$cont</td>
+        <td>$ren[codigo_pro]</td>
+        <td>$ren[nombre_pro]</td>
+        <td>$ren[cantidad_ren]</td>
+        <td>$$ren[precio_pro].00</td>
+        <td>$$ren[importe].00</td>
+           </tr> 
+        HDOC;
+        $sumatotal+=$ren["importe"];
+    }
+    if($datos->num_rows <= 0) {
+        $tabla .= <<<HDOC
+        <tr>
+        <td> <h3> Error al cargar los productos </h3> </td>
+        </tr> 
+        HDOC;
+    }else{
+        $tabla .= <<<HDOC
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h5>Numero de productos $cont</h5></div>
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+        <div class="alert alert-success" role="alert">
+        <h4> Total: $$sumatotal.00</h4></div>
+        </td>
+        HDOC;
+    }
+    $tabla .= "</tbody></table></div>";
     return $tabla;
 }
 
