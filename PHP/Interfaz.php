@@ -723,6 +723,55 @@ function vistaComprarCredito()
     return $compra;
 }
 
+function vistaNuevoCliente() {
+    return <<<HDOC
+        <div class="register" style='margin-top: 30px;'>
+            <h1>Nuevo Cliente</h1>
+            <hr>
+            <form action="javascript:crearNuevoCliente();" enctype="multipart/form-data" id="formNuevoUsuario">
+                <div class="inputs firstSection">
+                    <label for=""  class="nombre_label">
+                        <span class="nombre">Nombre</span>
+                    <input type="text" id="nombre" name="nombre" autocomplete="off" required  >
+                </label>
+                <label for=""  class="paterno_label">
+                    <span class="paterno">Apellido Paterno</span>
+                    <input type="text" id="paterno" name="paterno" autocomplete="off" required  >
+                </label>
+                <label for=""  class="materno_label">
+                    <span class="materno">Apellido Materno</span>
+                    <input type="text" id="materno" name="materno" autocomplete="off" required  >
+                </label>
+                <label for="" class="telefono_label">
+                    <span class="telefono">Teléfono</span>
+                    <input type="number" id="telefono" name="telefono" autocomplete="off" required   min="0">
+                </label>
+                <label for="" class="correo_label">
+                    <span class="correo">Correo</span>
+                    <input type="text" id="correo" name="correo" autocomplete="off" required  >
+                </label>
+                <div class='file-input' style="margin-bottom: 40px;">
+                    <input type='file' id="file" name="file">
+                </div>
+                <div>
+                    <input type="radio" id="woman"
+                    name="contact" value="Femenino">
+                    <label for="woman">Femenino</label>
+                
+                    <input type="radio" id="man"
+                    name="contact" value="Masculino">
+                    <label for="man">Masculino</label>
+                </div>
+            </div>
+            <hr class="hr">
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Crear nuevo cliente</button>
+            </div>
+            </form>
+        </div>
+    HDOC;
+}
+
 function clientesCredito($clientes)
 {
     $tabla = <<<HDOC

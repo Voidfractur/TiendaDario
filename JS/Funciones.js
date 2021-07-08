@@ -832,6 +832,46 @@ function verClientes() {
     sol.send(datos);
 }
 
+function nuevoCliente() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    datos.append(`vistanuevocliente`, `clientes`);
+    sol.addEventListener('load', function(e) {
+        document.getElementsByClassName(`main`)[0].innerHTML = menu + e.target.responseText;
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
+function crearNuevoCliente() {
+    var datos = new FormData();
+    var sol = new XMLHttpRequest;
+    let sex = null;
+    let form = document.querySelector("#formNuevoUsuario");
+    if (document.getElementById(`woman`).checked) {
+        sex = document.getElementById(`woman`).value;
+    } else if (document.getElementById(`man`).checked) {
+        sex = document.getElementById(`man`).value;
+    }
+    datos.append(`crearnuevocliente`, `newUser`);
+    datos.append(`nombre`, form.nombre.value);
+    datos.append(`paterno`, form.paterno.value);
+    datos.append(`materno`, form.materno.value);
+    datos.append(`sexo`, `${sex}`);
+    datos.append(`telefono`, form.telefono.value);
+    datos.append(`correo`, form.correo.value);
+    if (form.file.files.length > 0) {
+        datos.append(`fotoPerfil`, form.file.files[0]);
+    }
+    sol.addEventListener('load', function(e) {
+        verClientesMensaje(`Cliente creado con éxito`)
+    }, false);
+
+    sol.open('POST', '../PHP/Controlador.php', true);
+    sol.send(datos);
+}
+
 function verClientesMensaje(mensaje) {
     var datos = new FormData();
     var sol = new XMLHttpRequest;

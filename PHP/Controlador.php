@@ -133,6 +133,44 @@ if (isset($_POST['modificar'])) {
     $cnn->query("UPDATE empleado SET puesto_emp = '" . $_POST['puesto'] . "' WHERE cve_per = " . $_POST['modificar']);
 }
 
+if(isset($_POST['vistanuevocliente'])) {
+    echo vistaNuevoCliente();
+}
+
+if(isset($_POST['crearnuevocliente'])) {
+    require_once 'Persona.php';
+    require_once 'Cliente.php';
+    date_default_timezone_set("America/Mexico_City");
+    $per = new Persona();
+    $cliente = new Cliente();
+    $per->setNombre($_POST['nombre']);
+    $per->setPaterno($_POST['paterno']);
+    $per->setMaterno($_POST['materno']);
+    $per->setSexo($_POST['sexo']);
+    $per->setTelefono($_POST['telefono']);
+    $per->setCorreo($_POST['correo']);
+    $tipo = "";
+    if (isset($_FILES["fotoPerfil"]["tmp_name"]) && $_FILES["fotoPerfil"]["tmp_name"] != "") {
+        $archivo = $_FILES["fotoPerfil"]["tmp_name"];
+        $tipo = $_FILES["fotoPerfil"]["type"];
+        $tam = $_FILES['fotoPerfil']["size"];
+
+        $fp = fopen($archivo, "rb");
+        $contenido = fread($fp, $tam);
+        fclose($fp);
+        $contenido = addslashes($contenido);
+        $per->setFotoPerfil($contenido);
+    }
+    $persona = $cnn->query("INSERT INTO persona values(null,'" . $per->getPaterno() . "','" . $per->getMaterno() . "','" . $per->getNombre() . "','" . $per->getSexo() . "'," . $per->getTelefono() . ",'" . $per->getCorreo() . "','" . $per->getFotoPerfil() . "', '" . $tipo . "')");
+    $consult = $cnn->query("SELECT max(id_per) as id FROM persona");
+    $id = $consult->fetch_array(MYSQLI_ASSOC)['id'];
+    $cliente->setFechaRegistro(date("Y-m-d"));
+    $cliente->setHoraRegistro(date("H:i:s"));
+    $cliente->setTipoCliente("Cliente particular");
+    $nuevoCliente = $cnn->query("INSERT INTO cliente VALUES(null, '" . $cliente->getFechaRegistro() . "', '" . $cliente->getHoraRegistro() . "', '" . $cliente->getTipoCliente() . "', 'Activo', $id)");
+    echo $nuevoCliente;
+}
+
 if (isset($_POST['modificarCliente'])) {
     require_once 'Persona.php';
     $per = new Persona();
